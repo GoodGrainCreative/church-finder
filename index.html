@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Church Finder · Good Grain Creative</title>
+<meta name="description" content="Find a church near you, then match with the traditions most likely to feel like home.">
+<meta name="robots" content="noindex">
+<style>
+/* The stand-alone page: the widget under the Good Grain wordmark bar, on the site's cream. */
+:root { --page: #FDFBF6; --ink: #000000; color-scheme: light; }
+html { background: var(--page); }
+body { margin: 0; background: var(--page); color: var(--ink); padding: 24px max(16px, env(safe-area-inset-right, 0px)) 56px max(16px, env(safe-area-inset-left, 0px)); }
+.ggc-bar { max-width: 1240px; margin: 0 auto 22px; font-family: "Nunito", "Avenir Next", "Segoe UI", sans-serif; font-size: 18px; letter-spacing: 0.02em; }
+.ggc-bar a { color: inherit; text-decoration: none; }
+</style>
+</head>
+<body>
+<header class="ggc-bar"><a href="https://www.goodgraincreative.com">GOOD GRAIN CREATIVE</a></header>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&family=Nunito:wght@400;600;700;800&display=swap">
+<div id="ggc-church-finder" data-url="./data/" data-form="https://forms.monday.com/forms/1c461dbb1ca6369661da3f67f1b11636?r=use1" data-contact=""></div>
+<noscript><p>The Church Finder needs JavaScript to show the churches near you.</p></noscript>
+<template id="ggc-church-finder-template">
+<style>
+/* Good Grain Creative \0000b7 Church Finder
+   The site's look: cream ground, black type, gold as the one loud color, grey panels, Nunito for display and
+   Anonymous Pro for everything else. Sizes follow the width of the block the widget sits in, not the window. */
+:host {
+  all: initial; display: block; color-scheme: light;
+  --bg: #FDFBF6;        /* site cream */
+  --fg: #000000;
+  --muted: #5C5A55;
+  --panel: #EBEBEB;     /* site grey block */
+  --track: #D6D3CC;
+  --gold: #FFCC00;      /* site button gold */
+  --on-gold: #000000;
+  --earth: #5D270F;
+  --rule: #000000;
+  --radius: 6.4px;
+  --display: "Nunito", "Avenir Next", "Segoe UI", sans-serif;
+  --mono: "Anonymous Pro", "SF Mono", Menlo, Consolas, monospace;
+}
+[hidden] { display: none !important; }
+*, *::before, *::after { box-sizing: border-box; }
+
+.wrap {
+  all: initial; box-sizing: border-box; display: block;
+  font-family: var(--mono); font-size: 16px; line-height: 1.5; color: var(--fg); background: var(--bg);
+  container-type: inline-size; container-name: ggc; -webkit-text-size-adjust: 100%; text-size-adjust: 100%;
+}
+.page { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; padding-block: 4px 32px; }
+:host([data-edge-left]) .page { padding-left: clamp(16px, 4vw, 48px); }
+:host([data-edge-right]) .page { padding-right: clamp(16px, 4vw, 48px); }
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, dt, figure, form { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+h1, h2, h3, h4 { font-family: var(--display); font-weight: 700; line-height: 1.1; letter-spacing: normal; text-transform: none; color: var(--fg); text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: inherit; }
+b, strong { font-weight: 700; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; text-align: inherit; border-radius: 0; -webkit-tap-highlight-color: transparent; }
+input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--fg); outline-offset: 3px; border-radius: var(--radius); }
+
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.lede { font-size: clamp(17px, 2.1cqi, 20px); max-width: 52ch; }
+.sub { font-size: 14px; color: var(--muted); }
+.note { font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+.note b { color: var(--fg); }
+.num { font-family: var(--display); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.link { text-decoration: underline; text-underline-offset: 3px; font-size: 14.5px; }
+.link:hover { text-decoration-thickness: 2px; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--mono); font-size: 17px; line-height: 1.3; padding: 13px 20px; min-height: 50px; border-radius: var(--radius); text-decoration: none; cursor: pointer; text-align: center; transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease; }
+.btn.gold { background: var(--gold); color: var(--on-gold); }
+.btn.ink { background: var(--fg); color: var(--bg); }
+.btn.line { border: 2px solid var(--rule); background: var(--bg); color: var(--fg); padding: 11px 18px; }
+.btn.small { font-size: 15px; min-height: 42px; padding: 8px 14px; }
+.btn.line.small { padding: 6px 12px; }
+.btn.big { font-size: 19px; min-height: 60px; width: 100%; }
+.btn:hover { transform: translateY(-1px); }
+.btn[disabled] { opacity: 0.45; cursor: default; transform: none; }
+.btn svg { width: 20px; height: 20px; flex: none; }
+
+.chip { display: inline-flex; align-items: center; gap: 6px; font-size: 15px; line-height: 1.2; padding: 8px 12px; min-height: 42px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--bg); white-space: nowrap; transition: transform 0.12s ease, background-color 0.12s ease, color 0.12s ease; }
+.chip small { font-size: 12.5px; opacity: 0.7; font-variant-numeric: tabular-nums; }
+.chip:hover { transform: translateY(-1px); }
+.chip[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ctl { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ctl-label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.pill { display: inline-block; font-family: var(--display); font-weight: 800; font-size: 13px; line-height: 1; padding: 5px 9px 4px; border-radius: 99px; background: var(--fg); color: var(--bg); white-space: nowrap; font-variant-numeric: tabular-nums; vertical-align: middle; }
+.pill.gold { background: var(--gold); color: var(--on-gold); box-shadow: inset 0 0 0 1.5px var(--fg); }
+.pill.soft { background: var(--panel); color: var(--fg); }
+
+/* ---------- Masthead ---------- */
+.mast { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.mast-mark { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.wheat { height: 46px; width: auto; color: var(--gold); flex: none; display: block; }
+.mast-title { font-size: clamp(24px, 4.4cqi, 32px); font-weight: 800; line-height: 1; }
+.mast .eyebrow { font-size: 11.5px; color: var(--muted); margin-bottom: 4px; }
+.tabs { display: flex; gap: 6px; }
+.tab { font-size: 16px; line-height: 1; padding: 12px 16px; min-height: 44px; border-radius: var(--radius); border: 1px solid var(--rule); background: var(--bg); transition: transform 0.12s ease; }
+.tab:hover { transform: translateY(-1px); }
+.tab[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+
+/* ---------- Start ---------- */
+/* On a phone the gold box comes straight after the headline, so the first tap is on screen. */
+.hero { display: flex; flex-direction: column; gap: 22px; padding-top: 8px; }
+.hero-copy { display: contents; }
+.hero .title { order: 1; } .hero .slab { order: 2; } .hero .lede { order: 3; } .hero .facts { order: 4; }
+.title { font-weight: 800; line-height: 0.98; font-size: clamp(44px, 11.5cqi, 92px); letter-spacing: -0.02em; }
+.title .hl { background: linear-gradient(transparent 62%, var(--gold) 62%, var(--gold) 92%, transparent 92%); }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 560px; }
+.fact { background: var(--panel); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fact .num { font-size: clamp(22px, 5.4cqi, 34px); }
+.fact span { font-size: 12.5px; line-height: 1.3; color: var(--muted); }
+.slab { background: var(--gold); color: var(--on-gold); border-radius: var(--radius); padding: clamp(20px, 3.4cqi, 34px); display: flex; flex-direction: column; gap: 14px; min-width: 0; align-self: stretch; }
+.slab-label { font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+.slab-head { font-family: var(--display); font-weight: 800; font-size: clamp(24px, 4cqi, 32px); line-height: 1.1; }
+.or { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--on-gold); opacity: 0.5; }
+.where { position: relative; display: flex; flex-direction: column; gap: 6px; }
+.where label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.where-row { display: flex; gap: 8px; }
+.where input { flex: 1; min-width: 0; height: 50px; padding: 0 14px; font-size: 17px; background: var(--bg); border: 2px solid var(--fg); border-radius: var(--radius); outline-offset: 2px; }
+.where input::placeholder { color: #8a877f; }
+.suggest { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 8; background: var(--bg); border: 2px solid var(--fg); border-radius: var(--radius); overflow: hidden; }
+.suggest button { display: flex; justify-content: space-between; gap: 12px; width: 100%; padding: 11px 14px; font-size: 16px; min-height: 44px; align-items: center; }
+.suggest button small { color: var(--muted); font-size: 13px; white-space: nowrap; }
+.suggest button:hover, .suggest button[aria-selected="true"] { background: var(--fg); color: var(--bg); }
+.suggest button:hover small, .suggest button[aria-selected="true"] small { color: var(--bg); }
+.slab-fine { font-size: 13.5px; line-height: 1.45; }
+.slab-fine.warn { font-weight: 700; }
+.teaser { border: 2px solid var(--rule); border-radius: var(--radius); padding: clamp(18px, 3cqi, 28px); display: grid; gap: 16px; align-items: center; }
+.teaser h3 { font-size: clamp(22px, 3.4cqi, 28px); }
+.teaser p { max-width: 62ch; }
+.teaser .steps { display: flex; flex-wrap: wrap; gap: 6px 8px; font-size: 13.5px; color: var(--muted); }
+.teaser .steps span { border: 1px solid var(--track); border-radius: 99px; padding: 3px 10px; }
+@container ggc (min-width: 880px) {
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 48px; align-items: center; padding-top: 20px; }
+  .hero-copy { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .teaser { grid-template-columns: minmax(0, 1fr) auto; gap: 32px; }
+  .slab { align-self: center; }
+}
+
+/* ---------- Results ---------- */
+.app { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px 32px; }
+.bar-where { display: flex; flex-direction: column; gap: 4px; min-width: 0; margin-right: auto; }
+.bar-where .eyebrow { color: var(--muted); font-size: 12px; }
+.bar-place { font-size: clamp(26px, 5cqi, 40px); font-weight: 800; line-height: 1.05; overflow-wrap: anywhere; }
+.bar-where .row { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; }
+
+.fit { background: var(--panel); border-radius: var(--radius); padding: clamp(14px, 2.4cqi, 22px); display: flex; flex-direction: column; gap: 14px; }
+.fit-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.fit-head h3 { font-size: 21px; }
+.fit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.fit-card { background: var(--bg); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; border: 2px solid transparent; text-align: left; }
+.fit-card[aria-pressed="true"] { border-color: var(--fg); }
+.fit-card:hover { transform: translateY(-1px); }
+.fit-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.fit-name { font-family: var(--display); font-weight: 800; font-size: 17px; line-height: 1.2; }
+.fit-pct { font-size: 26px; }
+.fit-pct small { font-size: 14px; font-weight: 700; }
+.fit-meter { height: 6px; background: var(--track); border-radius: 99px; overflow: hidden; }
+.fit-meter span { display: block; height: 100%; width: var(--w); background: var(--fg); }
+.fit-card.top .fit-meter span { background: var(--gold); box-shadow: inset 0 0 0 1px var(--fg); }
+.fit-why { font-size: 13.5px; line-height: 1.4; color: var(--muted); }
+.fit-count { font-size: 13px; font-weight: 700; }
+.fit-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+
+.filters { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.trads { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+.trads .chip { flex: none; }
+.tools { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; }
+.search { flex: 1 1 260px; max-width: 420px; height: 44px; padding: 0 12px; font-size: 16px; background: var(--bg); border: 1px solid var(--fg); border-radius: var(--radius); }
+.check { display: inline-flex; align-items: center; gap: 8px; font-size: 14.5px; cursor: pointer; min-height: 44px; }
+.check input { appearance: none; -webkit-appearance: none; width: 20px; height: 20px; border: 2px solid var(--fg); border-radius: 4px; margin: 0; display: grid; place-content: center; background: var(--bg); cursor: pointer; flex: none; }
+.check input:checked { background: var(--fg); }
+.check input:checked::after { content: ""; width: 10px; height: 6px; border: solid var(--bg); border-width: 0 0 2.5px 2.5px; transform: rotate(-45deg) translate(1px, -1px); }
+.count { font-size: 14.5px; }
+.count b { font-family: var(--display); font-weight: 800; font-size: 17px; }
+.banner { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; font-size: 14.5px; background: var(--fg); color: var(--bg); padding: 10px 14px; border-radius: var(--radius); }
+.banner .link { color: var(--bg); }
+
+.cols { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.mapcol { order: -1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.map { height: 300px; border: 2px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: #F3F0E8; position: relative; isolation: isolate; }
+.map-key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--muted); align-items: center; }
+.map-key span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: var(--fg); display: inline-block; flex: none; box-shadow: 0 0 0 1.5px var(--bg), 0 0 0 2.5px var(--fg); }
+.dot.hollow { background: var(--bg); box-shadow: 0 0 0 2px var(--fg); width: 10px; height: 10px; }
+.dot.gold { background: var(--gold); box-shadow: 0 0 0 1.5px var(--fg); }
+.dot.me { background: var(--gold); box-shadow: 0 0 0 3px var(--fg); width: 9px; height: 9px; }
+.map-off { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 24px; font-size: 14px; color: var(--muted); }
+.radar { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: manipulation; }
+.listcol { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.list { display: flex; flex-direction: column; border-top: 1px solid var(--rule); }
+@container ggc (min-width: 900px) {
+  .cols { display: grid; grid-template-columns: minmax(360px, 0.82fr) minmax(0, 1.18fr); gap: 24px; align-items: start; }
+  .mapcol { order: 0; position: sticky; top: calc(var(--stick, 0px) + 16px); }
+  .map { height: min(690px, 78vh); min-height: 420px; }
+  .listcol { max-height: calc(min(690px, 78vh) + 30px); min-height: 450px; overflow-y: auto; padding-right: 10px; scrollbar-width: thin; overscroll-behavior: contain; }
+}
+
+/* ---------- One church ---------- */
+.card { border-bottom: 1px solid var(--rule); min-width: 0; scroll-margin: calc(var(--stick, 0px) + 12px) 0 12px; }
+.count, .bar { scroll-margin-top: calc(var(--stick, 0px) + 12px); }
+.divider { padding: 22px 2px 12px; border-bottom: 1px solid var(--rule); display: flex; flex-direction: column; gap: 4px; }
+.divider b { font-family: var(--display); font-weight: 800; font-size: 16px; line-height: 1.25; }
+.divider span { font-size: 13px; line-height: 1.45; color: var(--muted); }
+.bar-where .sub:empty { display: none; }
+#radius-chips { flex-wrap: nowrap; }
+#radius-chips .chip { padding-inline: clamp(8px, 2.4cqi, 12px); }
+@container ggc (max-width: 520px) { .bar > .ctl { width: 100%; } #radius-chips .chip { flex: 1; justify-content: center; } }
+.card-main { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 14px; width: 100%; padding: 14px 2px; align-items: start; }
+.card-main:hover .card-name { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+.card-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.card-name { font-family: var(--display); font-weight: 800; font-size: 18px; line-height: 1.2; overflow-wrap: anywhere; }
+.card-den { font-size: 14px; line-height: 1.35; }
+.card-den.none { color: var(--muted); }
+.card-loc { font-size: 13.5px; line-height: 1.35; color: var(--muted); }
+.card-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; text-align: right; }
+.dist { font-size: 24px; white-space: nowrap; }
+.dist small { font-family: var(--mono); font-weight: 400; font-size: 12.5px; letter-spacing: 0; color: var(--muted); margin-left: 3px; }
+.card[data-open] { background: var(--panel); border-radius: var(--radius); border-bottom-color: transparent; margin: 6px 0; box-shadow: inset 0 0 0 2px var(--fg); }
+.card[data-open] .card-main { padding: 14px 14px 6px; }
+.card-more { padding: 4px 14px 16px; display: flex; flex-direction: column; gap: 14px; }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; }
+.flag { font-size: 13.5px; line-height: 1.45; padding-left: 12px; border-left: 3px solid var(--fg); }
+.about h4 { font-size: 15px; margin-bottom: 4px; }
+.about p { font-size: 14.5px; line-height: 1.5; }
+.about p + p { margin-top: 6px; }
+.why { display: flex; flex-direction: column; gap: 6px; }
+.why li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; font-size: 14.5px; line-height: 1.4; }
+.why .mk { font-family: var(--display); font-weight: 800; text-align: center; }
+.why-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.why-head h4 { font-size: 15px; }
+.record { font-size: 13px; line-height: 1.5; color: var(--muted); }
+.more-row { display: flex; justify-content: center; }
+.empty { border: 2px dashed var(--track); border-radius: var(--radius); padding: 28px 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.empty h3 { font-size: 21px; }
+.skel { height: 74px; border-bottom: 1px solid var(--track); background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.045), transparent) 0 0 / 200% 100%; animation: sweep 1.2s linear infinite; }
+@keyframes sweep { to { background-position: -200% 0; } }
+
+/* ---------- Matcher ---------- */
+.quiz { display: flex; justify-content: center; }
+.quiz-box { width: 100%; max-width: 780px; border: 2px solid var(--rule); border-radius: var(--radius); padding: clamp(18px, 3.6cqi, 36px); display: flex; flex-direction: column; gap: 22px; }
+.quiz-top { display: flex; flex-direction: column; gap: 10px; }
+.quiz-top .row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.progress { height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; }
+.progress span { display: block; height: 100%; width: var(--p, 0%); background: var(--gold); box-shadow: inset 0 0 0 1.5px var(--fg); border-radius: 99px; transition: width 0.3s ease; }
+.q-title { font-size: clamp(24px, 4.6cqi, 34px); font-weight: 800; line-height: 1.12; }
+.q-sub { font-size: 15.5px; max-width: 60ch; }
+.q-body { display: flex; flex-direction: column; gap: 14px; }
+.opts { display: grid; gap: 8px; }
+.opt { display: flex; flex-direction: column; gap: 2px; padding: 13px 16px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--bg); min-height: 54px; justify-content: center; transition: transform 0.12s ease; }
+.opt:hover { transform: translateY(-1px); }
+.opt b { font-family: var(--display); font-weight: 800; font-size: 17px; line-height: 1.25; }
+.opt span { font-size: 14px; color: var(--muted); line-height: 1.35; }
+.opt[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.opt[aria-pressed="true"] span { color: var(--bg); opacity: 0.82; }
+.opts.grid { grid-template-columns: repeat(auto-fill, minmax(186px, 1fr)); }
+.opts.grid .opt { min-height: 48px; padding: 10px 14px; }
+.opts.grid .opt b { font-size: 15.5px; }
+.q-part { display: flex; flex-direction: column; gap: 10px; padding-top: 6px; }
+.q-title:focus { outline: none; }
+.quiz-box { scroll-margin-top: calc(var(--stick, 0px) + 12px); }
+.q-part + .q-part { padding-top: 16px; border-top: 1px solid var(--track); }
+.q-part h4 { font-size: 18px; }
+.quiz-nav { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.care-left { font-size: 13.5px; color: var(--muted); }
+@container ggc (min-width: 620px) { .opts.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } .opts.three { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ---------- Foot ---------- */
+.foot { border-top: 1px solid var(--rule); padding-top: 16px; display: grid; gap: 14px; }
+.foot p { font-size: 13px; line-height: 1.55; color: var(--muted); max-width: 96ch; }
+.foot p b { color: var(--fg); }
+.foot-row { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; }
+.made { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
+.made .wheat { height: 24px; }
+
+/* ---------- The map library, restyled to match ---------- */
+.maplibregl-map { font: inherit; }
+.maplibregl-ctrl-group { border-radius: var(--radius) !important; box-shadow: 0 0 0 2px var(--fg) !important; background: var(--bg) !important; overflow: hidden; }
+.maplibregl-ctrl-group button { width: 36px !important; height: 36px !important; background-color: var(--bg) !important; }
+.maplibregl-ctrl-group button + button { border-top: 1px solid var(--fg) !important; }
+.maplibregl-ctrl-attrib { font-size: 10.5px !important; background: rgba(253, 251, 246, 0.86) !important; font-family: var(--mono); }
+.maplibregl-ctrl-attrib a { color: var(--fg) !important; }
+.maplibregl-canvas:focus-visible { outline: 3px solid var(--fg); outline-offset: -3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+<div class="wrap">
+<svg width="0" height="0" hidden aria-hidden="true" focusable="false"><path id="wheat-path" fill="currentColor" fill-rule="evenodd" d="M72.04 439.51C71.76 439.31 71.42 439 71.27 438.81C70.61 437.97 70.22 435.45 70.48 433.69C70.93 430.61 71.29 428.59 71.55 427.53C71.72 426.86 71.92 425.86 72 425.31C72.08 424.76 72.28 423.69 72.45 422.94C72.62 422.18 72.87 420.8 73.01 419.88C73.15 418.95 73.38 417.69 73.51 417.08C73.65 416.48 73.87 415.02 74 413.83C74.14 412.65 74.36 410.93 74.5 410C75.36 403.99 75.39 390.82 74.56 384.88C74.45 384.15 74.23 382.32 74.05 380.81C73.88 379.3 73.65 377.7 73.55 377.25C73.45 376.8 73.22 375.55 73.06 374.46C72.89 373.37 72.66 372.14 72.56 371.72C72.45 371.31 72.23 370.24 72.07 369.33C71.91 368.43 71.56 366.88 71.31 365.89C70.8 363.93 70.82 363.5 71.41 363.5C72.06 363.5 73.83 365.92 75.66 369.31C75.89 369.73 76.88 371.83 77.48 373.19C77.69 373.67 78.01 374.46 78.17 374.94C78.34 375.42 78.79 376.71 79.17 377.81C79.55 378.91 79.93 380.12 80.01 380.5C80.09 380.88 80.29 381.54 80.45 381.97C80.61 382.41 80.86 383.36 81 384.1C81.14 384.84 81.37 385.83 81.5 386.31C81.63 386.79 81.86 387.92 82 388.81C82.14 389.71 82.36 391 82.5 391.69C82.95 394.01 83.58 401.2 83.73 405.62C83.94 411.96 83.33 421.33 82.5 424.62C82.37 425.14 82.14 426.12 82 426.79C81.85 427.47 81.62 428.27 81.49 428.58C81.36 428.89 81.16 429.49 81.05 429.91C80.67 431.41 79.34 434.17 78.11 436.02C76.66 438.19 74.5 439.88 73.16 439.88C72.67 439.88 72.43 439.8 72.04 439.51ZM60.31 366.79C60.11 366.76 58.78 366.54 57.38 366.3C51.71 365.32 47.19 363.42 42.75 360.14C40.7 358.62 37.44 355.09 35.75 352.56C34.91 351.3 33 347.75 33 347.45C33 347.39 32.78 346.85 32.51 346.26C31.8 344.73 31.78 344.58 32.19 344.17L32.53 343.84L34.61 343.92C36.98 344.02 39.22 344.27 40.31 344.55C40.73 344.66 41.57 344.84 42.19 344.94C44.82 345.39 49.62 347.26 52.06 348.78C55.04 350.65 56.93 352.17 58.67 354.11C60.41 356.06 62.47 359.12 63.05 360.62C63.17 360.93 63.38 361.36 63.5 361.56C63.63 361.77 63.87 362.36 64.04 362.88C64.21 363.39 64.49 364.15 64.66 364.56C65.14 365.7 65.2 366.3 64.88 366.62C64.64 366.86 64.5 366.87 62.66 366.86C61.57 366.85 60.52 366.82 60.31 366.79ZM65.57 355.59C65.14 355.2 64.19 351.34 63.99 349.09C63.82 347.25 63.9 342.24 64.12 341C64.32 339.88 65.21 337.09 65.64 336.23C65.84 335.85 66 335.48 66 335.42C66 335.2 67.4 333.08 68.14 332.18C69.74 330.2 72.53 327.96 74.69 326.91C75.1 326.71 75.61 326.45 75.81 326.34C76.63 325.88 77.74 325.47 80.85 324.49C82.69 323.91 83.08 323.91 83.53 324.52C84.29 325.53 84.47 333.32 83.82 336.81C83.02 341.15 81.13 345.11 78.4 348.19C76.69 350.13 74.67 351.79 72.44 353.1C71.27 353.79 68.83 355 68.62 355C68.51 355 68.02 355.2 67.53 355.44C66.5 355.95 66.01 355.99 65.57 355.59ZM48 341.29C44.83 341.14 41.43 340.41 38.75 339.32C33.18 337.05 28.27 332.86 24.58 327.25C24.24 326.73 23.78 326.03 23.55 325.69C23.14 325.06 21.19 321.25 20.64 319.99C20.2 318.99 19.51 317.19 19.16 316.12C18.99 315.61 18.69 314.77 18.5 314.25C18.31 313.73 18.06 312.92 17.96 312.44C17.85 311.96 17.65 311.24 17.51 310.85C17.38 310.46 17.15 309.56 17 308.85C16.86 308.14 16.63 307.17 16.5 306.69C16.19 305.56 15.85 303.37 15.9 302.85C15.93 302.57 16.04 302.39 16.27 302.26C16.58 302.09 16.81 302.11 19.08 302.55C23.73 303.45 27.46 304.47 29.88 305.5C30.32 305.7 30.83 305.89 31 305.94C31.57 306.09 35.94 308.23 36.51 308.64C36.7 308.76 36.98 308.92 37.15 308.99C37.98 309.3 40.79 311.31 42.8 313.01C46.44 316.11 49.31 319.69 51.35 323.69C52.12 325.19 52.93 327.02 53.1 327.62C53.17 327.87 53.34 328.36 53.49 328.73C53.63 329.1 53.89 329.97 54.06 330.67C54.23 331.37 54.48 332.35 54.62 332.86C54.86 333.73 55.51 338.76 55.53 339.79C55.54 340.48 55.13 340.85 54.18 341C53.3 341.13 49.78 341.39 49.21 341.35C48.99 341.34 48.45 341.31 48 341.29ZM59.85 326.34C58.33 324.71 55.54 319.73 54.95 317.57C54.85 317.22 54.63 316.54 54.46 316.06C54.19 315.3 53.98 314.34 53.35 310.81C53.27 310.4 53.21 308.85 53.21 307.38C53.21 305.12 53.25 304.45 53.49 303.19C53.64 302.36 53.85 301.21 53.95 300.62C54.04 300.04 54.33 298.92 54.57 298.12C55.02 296.69 55.21 296.15 55.88 294.38C56.29 293.29 58.16 289.54 58.66 288.81C58.85 288.54 59 288.27 59 288.22C59 287.86 62.22 283.32 64.11 281C67.8 276.49 73.19 271.27 78.11 267.44C78.55 267.09 79.14 266.61 79.43 266.37C80.86 265.12 81.45 265.21 81.98 266.76C82.11 267.14 82.34 267.69 82.49 267.98C82.64 268.28 82.92 268.98 83.12 269.54C83.31 270.1 83.58 270.87 83.72 271.25C84.26 272.73 84.88 274.73 85.06 275.62C85.17 276.14 85.37 276.93 85.51 277.37C85.65 277.82 85.87 278.89 86.01 279.75C86.15 280.61 86.37 281.9 86.5 282.62C86.99 285.24 87.16 290.52 86.87 294.05C86.54 298.15 85.16 303.18 83.37 306.82C83.1 307.38 82.88 307.87 82.88 307.91C82.88 307.96 82.68 308.3 82.44 308.68C82.2 309.06 82 309.39 82 309.43C82 309.46 81.68 309.99 81.29 310.59C78.27 315.23 74.1 319.32 69.25 322.39C68.8 322.68 68.14 323.11 67.77 323.36C67.07 323.83 66.51 324.14 65.05 324.87C64.58 325.1 63.99 325.41 63.75 325.56C63.51 325.71 63.05 325.92 62.74 326.04C62.43 326.16 61.98 326.39 61.75 326.56C61.47 326.77 61.16 326.88 60.84 326.88C60.42 326.88 60.27 326.79 59.85 326.34ZM36.75 299.76C35.41 299.44 33.99 298.98 31.94 298.19C30.68 297.7 27.51 296.01 26.6 295.34C24.34 293.69 23.62 293.11 22.64 292.18C20.87 290.5 18.98 288.23 17.7 286.26C17.25 285.57 16.12 283.61 16.12 283.52C16.13 283.49 15.9 283 15.63 282.45C14.88 280.91 14.26 279.4 13.99 278.48C13.86 278.02 13.64 277.36 13.5 277C13.27 276.43 13.06 275.55 12.31 272.19C12.08 271.17 11.53 266.38 11.36 264C11.18 261.58 11.29 257.65 11.63 254.25C12.07 249.76 12.26 248.08 12.44 247.19C12.54 246.71 12.77 245.38 12.94 244.25C13.5 240.69 13.76 240 14.54 240C14.76 240 15.08 240.1 15.25 240.22C15.42 240.33 16.36 240.84 17.34 241.33C18.31 241.83 19.35 242.41 19.64 242.62C19.93 242.83 20.22 243 20.3 243C20.37 243 20.72 243.19 21.06 243.42C21.41 243.65 22.25 244.21 22.94 244.67C23.62 245.13 24.5 245.73 24.88 246C27.71 248.07 27.61 247.99 29.87 249.99C32.21 252.07 34.12 254.1 36.32 256.83C36.83 257.46 38.84 260.48 39.39 261.44C39.87 262.27 40.77 264.09 41.38 265.44C42.35 267.62 43.56 271.98 43.88 274.5C44.24 277.35 44.14 282.85 43.68 285.38C42.99 289.17 42.31 291.62 41.03 295C39.87 298.04 39.3 299.29 38.89 299.7C38.53 300.06 38.09 300.07 36.75 299.76ZM52.88 274.98C52.36 274.63 50.44 271.77 49.6 270.1C48.83 268.56 48.04 266.78 47.93 266.31C47.88 266.11 47.71 265.65 47.56 265.3C47.4 264.94 47.18 264.24 47.07 263.73C46.96 263.23 46.73 262.32 46.55 261.71C45.96 259.63 45.82 258.06 45.82 253.69C45.82 249.44 45.98 247.55 46.5 245.69C46.63 245.21 46.86 244.28 47 243.62C47.23 242.53 47.88 240.54 48.87 237.88C49.32 236.67 49.71 235.82 50.78 233.69C52.1 231.07 52.38 230.57 53.62 228.61C53.86 228.22 54.15 227.75 54.27 227.55C54.89 226.46 57.35 223.07 59.11 220.88C63.29 215.67 71.21 207.79 76.13 203.94C77.38 202.96 81.13 199.95 81.64 199.5C82.31 198.93 82.78 198.85 83.05 199.28C83.44 199.9 84.01 204.16 84.63 210.97C84.83 213.29 84.91 218.97 84.77 221.81C84.6 225.18 83.87 231.9 83.45 233.94C83.28 234.76 83.03 236.03 82.89 236.75C82.44 239.05 80.99 244.17 80.44 245.43C80.33 245.7 80.12 246.29 79.98 246.74C79.84 247.19 79.64 247.69 79.54 247.85C79.44 248.01 79.22 248.5 79.06 248.93C78.68 249.93 77.96 251.42 76.6 253.99C75.7 255.7 75.38 256.22 73.69 258.68C71.13 262.41 67.31 266.43 63.58 269.31C62.61 270.07 60.17 271.75 59.69 272.01C59.41 272.16 59.1 272.36 58.99 272.45C58.88 272.55 58.46 272.81 58.05 273.02C53.39 275.5 53.56 275.44 52.88 274.98ZM33.38 241.07C29.29 239.29 26.1 237 22.42 233.21C19.16 229.86 16.45 226.04 14.06 221.44C13.78 220.89 13.45 220.27 13.34 220.06C13.01 219.45 12.25 217.74 11.92 216.88C11.76 216.44 11.57 216.02 11.5 215.94C11.38 215.79 10.68 213.93 10.16 212.38C9.99 211.86 9.72 211.09 9.56 210.67C9.39 210.24 9.14 209.43 9 208.85C8.85 208.28 8.62 207.5 8.48 207.13C8.35 206.75 8.13 205.94 8 205.32C7.87 204.7 7.64 203.79 7.5 203.31C7.36 202.83 7.13 201.79 6.99 201C6.85 200.21 6.63 199.14 6.5 198.62C6.37 198.11 6.12 196.59 5.94 195.25C5.76 193.91 5.56 192.59 5.5 192.31C5.12 190.61 4.4 181.53 4.23 176.2C4.03 170.09 4.33 159.91 4.82 156.16C4.91 155.47 5.24 155.26 5.73 155.58C7.14 156.49 15.74 164.95 19.01 168.62C24.38 174.67 29.21 180.97 31.83 185.38C32.01 185.68 32.34 186.22 32.56 186.56C32.78 186.91 33.19 187.58 33.46 188.06C33.74 188.54 34.13 189.22 34.33 189.56C34.85 190.46 35.5 191.71 36.38 193.5C37.6 195.97 37.85 196.51 38.17 197.31C38.34 197.72 38.58 198.34 38.72 198.69C39.32 200.17 39.99 201.98 40.12 202.5C40.2 202.81 40.37 203.34 40.5 203.69C40.64 204.03 40.86 204.82 41 205.44C41.15 206.06 41.37 206.9 41.51 207.31C41.8 208.23 42.59 213.15 42.75 215.12C42.91 216.99 42.91 219.45 42.75 221.22C42.59 222.98 41.82 227.62 41.55 228.38C41.44 228.68 41.19 229.47 41 230.12C40.09 233.16 38.4 236.81 36.56 239.69C36.34 240.03 36.04 240.51 35.9 240.76C35.39 241.61 34.78 241.68 33.38 241.07ZM48.33 205.44C48.02 205.13 47.9 204.55 47.62 201.97C47.39 199.87 47.36 199.03 47.41 196.28C47.47 192.62 47.91 188.37 48.45 186.12C48.63 185.4 48.85 184.39 48.95 183.88C49.4 181.47 51.07 176.58 52.58 173.19C53.41 171.33 54.83 168.61 55.81 167C56.04 166.62 56.36 166.09 56.52 165.82C57.18 164.7 58.84 162.28 59.94 160.83C60.35 160.29 60.8 159.69 60.94 159.51C61.37 158.93 63.12 156.87 64.59 155.24C66.47 153.13 70.19 149.61 72.55 147.69C73.78 146.69 74.57 146.06 75.05 145.69C75.32 145.48 75.83 145.09 76.18 144.82C76.53 144.55 77.04 144.17 77.31 143.97C78.99 142.78 79.71 142.28 80.14 142C80.4 141.83 80.83 141.54 81.09 141.36C81.35 141.19 81.98 140.77 82.5 140.43C83.02 140.1 83.66 139.68 83.94 139.5C84.21 139.31 84.61 139.08 84.81 138.98C85.2 138.78 85.92 138.35 87.43 137.41C87.9 137.12 88.35 136.88 88.41 136.88C88.47 136.88 88.68 136.77 88.86 136.63C89.05 136.5 89.57 136.2 90.01 135.97C90.45 135.74 90.98 135.45 91.19 135.34C91.39 135.22 91.79 135.02 92.06 134.89C92.34 134.76 93.35 134.25 94.31 133.77C96.42 132.7 96.82 132.65 97.11 133.39C97.17 133.56 97.3 134.97 97.39 136.52C97.53 139 97.52 139.77 97.33 142.83C97.08 146.88 96.84 149.35 96.55 150.71C96.44 151.25 96.19 152.56 96 153.62C95.63 155.68 94.85 158.83 94.32 160.36C94.14 160.86 94 161.35 94 161.45C94 161.63 93.91 161.89 93.02 164.25C92.75 164.97 92.38 165.96 92.2 166.44C91.47 168.4 88.91 173.43 87.51 175.69C86.63 177.1 85.74 178.47 85.41 178.93C84.23 180.59 82.56 182.74 81.58 183.88C79.36 186.45 75.1 190.62 73.08 192.19C72.82 192.39 72.34 192.77 72.02 193.03C70.74 194.06 67.52 196.36 66.38 197.06C64.13 198.45 62.76 199.24 61.38 199.99C60.86 200.27 60.3 200.57 60.12 200.67C59.95 200.77 59.19 201.14 58.44 201.5C57.68 201.86 56.67 202.34 56.19 202.57C54.47 203.39 53.43 203.85 52.94 204C52.66 204.09 52.16 204.3 51.82 204.47C51.48 204.64 50.92 204.86 50.57 204.96C50.22 205.07 49.73 205.26 49.47 205.39C48.91 205.67 48.58 205.69 48.33 205.44ZM32.8 174.78C30.13 171.74 28.56 169.68 26.28 166.22C25.09 164.42 24.6 163.64 23.36 161.5C22.66 160.29 20.07 155.1 19.93 154.62C19.88 154.45 19.71 154.04 19.54 153.71C19.23 153.1 18.86 152.14 17.98 149.69C17.11 147.28 16.19 144.25 15.93 143C15.83 142.48 15.63 141.69 15.49 141.23C15.36 140.77 15.11 139.53 14.94 138.47C14.78 137.41 14.55 136.08 14.45 135.51C13.64 131.24 13.67 119.58 14.51 115.8C14.57 115.51 14.76 114.32 14.94 113.14C15.11 111.96 15.37 110.65 15.5 110.22C15.63 109.79 15.83 108.99 15.94 108.44C16.14 107.42 16.76 105.2 17.32 103.5C17.5 102.98 17.78 102.09 17.95 101.51C18.12 100.93 18.37 100.26 18.5 100.01C18.62 99.76 18.82 99.22 18.94 98.81C19.06 98.4 19.31 97.75 19.5 97.38C19.69 97 19.88 96.55 19.93 96.38C20.37 94.85 24.1 87.41 26.01 84.23C26.25 83.84 26.6 83.25 26.8 82.92C27 82.59 27.63 81.58 28.19 80.69C29.13 79.21 29.69 78.37 30.95 76.56C31.19 76.22 31.52 75.74 31.69 75.5C32.3 74.6 32.53 74.38 32.79 74.38C33.2 74.37 33.58 74.69 33.96 75.35C34.14 75.67 34.39 76.05 34.5 76.19C34.61 76.33 34.86 76.69 35.04 77C35.22 77.31 35.65 78.01 35.99 78.56C37.07 80.29 38.25 82.47 39.79 85.56C41.4 88.8 42 90.06 42 90.19C42 90.25 42.19 90.73 42.43 91.24C43.17 92.87 44.17 95.41 44.84 97.38C45.01 97.89 45.31 98.76 45.51 99.31C45.7 99.86 46 100.79 46.17 101.38C46.34 101.96 46.6 102.83 46.74 103.31C47.38 105.49 47.66 106.56 48 108.19C48.2 109.15 48.45 110.25 48.56 110.62C48.66 111 48.89 112.27 49.06 113.44C49.24 114.61 49.46 116.01 49.57 116.56C49.83 118.02 50.09 121.08 50.27 124.96C50.5 129.96 50.14 137.3 49.5 140.75C49.37 141.47 49.14 142.79 49 143.69C48.86 144.58 48.63 145.71 48.5 146.19C48.37 146.67 48.14 147.62 48 148.31C47.86 149 47.63 149.92 47.48 150.36C47.34 150.8 47.09 151.64 46.94 152.23C46.78 152.83 46.51 153.71 46.34 154.19C46.16 154.67 45.9 155.43 45.75 155.88C45.07 157.89 44.74 158.77 44.46 159.34C44.29 159.67 44.08 160.19 44 160.5C43.92 160.81 43.73 161.29 43.57 161.56C43.41 161.84 43.18 162.34 43.05 162.69C42.78 163.43 39.86 169.25 39.52 169.73C39.39 169.91 39.1 170.4 38.88 170.81C38.35 171.82 37.22 173.71 36.27 175.19C35.48 176.42 35.27 176.62 34.81 176.62C34.46 176.62 34.24 176.42 32.8 174.78ZM59.78 139.92C59.5 139.8 59.27 139.19 59.06 137.99C58.95 137.34 58.73 136.1 58.56 135.23C58.39 134.36 58.19 132.7 58.11 131.54C57.94 129.01 58.04 123.62 58.3 121.81C58.62 119.58 59.25 116.15 59.45 115.6C59.55 115.3 59.78 114.48 59.95 113.77C60.12 113.06 60.34 112.27 60.45 112.02C60.56 111.77 60.83 111.03 61.06 110.38C61.67 108.59 62.53 106.59 63.4 104.94C65.4 101.11 66.42 99.52 69.03 96.1C69.85 95.03 71.99 92.57 73.15 91.36C76.03 88.37 78.87 85.95 83.2 82.8C83.75 82.4 85.83 81.02 86.68 80.5C87.07 80.26 87.66 79.89 88 79.67C88.34 79.45 88.91 79.11 89.27 78.91C89.64 78.7 90.36 78.29 90.88 78C92.42 77.11 95.65 75.45 97.56 74.56C98.04 74.33 98.98 73.89 99.64 73.57C100.31 73.26 100.92 73 101.01 73C101.1 73 101.48 72.83 101.85 72.61C102.6 72.19 103.29 72.11 103.59 72.41C103.96 72.79 104.82 76.68 105.26 80C105.67 83.05 105.69 83.35 105.68 87.06C105.68 90.75 105.66 91.08 105.27 93.78C105.05 95.34 104.82 96.86 104.76 97.16C104.47 98.56 103.82 101.04 103.5 101.94C103.31 102.49 103.05 103.27 102.94 103.68C102.82 104.09 102.6 104.68 102.44 104.99C102.29 105.31 102.09 105.79 102 106.06C101.83 106.62 99.94 110.44 99.15 111.85C96.69 116.23 91.94 121.79 87.53 125.46C86.09 126.66 83.72 128.48 82.64 129.2C81.18 130.18 79.72 131.12 78.6 131.79C78.38 131.92 77.96 132.18 77.69 132.36C77.41 132.54 76.85 132.86 76.44 133.08C75.65 133.49 74.15 134.28 73.31 134.73C73.04 134.88 72.62 135.08 72.38 135.18C72.13 135.28 71.74 135.47 71.5 135.61C71 135.89 69.19 136.71 68.03 137.18C66.01 138.01 65.63 138.16 64.88 138.5C64.43 138.7 63.82 138.92 63.53 139C63.24 139.07 62.54 139.33 61.99 139.57C61.04 139.97 60.23 140.1 59.78 139.92ZM49.26 91.89C49.13 91.75 48.96 91.32 48.88 90.92C48.8 90.52 48.62 89.8 48.48 89.33C48.34 88.86 48.1 87.46 47.93 86.21C47.76 84.96 47.54 83.37 47.44 82.68C47.12 80.49 46.97 75.63 47.12 72.17C47.2 70.46 47.31 68.7 47.37 68.25C47.43 67.8 47.65 66.14 47.86 64.56C48.08 62.98 48.34 61.38 48.44 61C48.54 60.62 48.8 59.55 49 58.62C49.39 56.84 49.81 55.3 50.32 53.75C50.49 53.23 50.79 52.31 50.99 51.69C51.32 50.64 51.61 49.88 52.27 48.31C52.41 47.97 52.66 47.35 52.83 46.94C52.99 46.52 53.29 45.85 53.49 45.44C55.55 41.2 55.59 41.14 57.61 37.69C58.44 36.27 60.18 33.69 61.43 32.02C62.12 31.1 62.8 30.2 62.94 30.01C66.17 25.68 73.26 18.61 78.12 14.88C78.92 14.27 80.07 13.38 80.67 12.91C80.96 12.68 81.47 12.3 81.81 12.06C82.16 11.82 83.17 11.12 84.06 10.49C84.96 9.87 85.83 9.27 86 9.16C86.17 9.05 86.68 8.73 87.12 8.44C87.89 7.94 88.55 7.52 90.15 6.53C91.85 5.46 93.57 4.5 93.75 4.5C94.1 4.5 94.49 4.88 94.62 5.35C94.69 5.61 94.86 6.71 95 7.81C95.14 8.91 95.36 10.54 95.49 11.44C95.94 14.44 96.06 16.93 96.06 23.31C96.06 29.7 95.94 32.28 95.5 34.99C95.37 35.79 95.15 37.34 95 38.44C94.86 39.54 94.63 40.86 94.5 41.38C94.37 41.89 94.17 42.82 94.06 43.44C93.95 44.06 93.7 45.1 93.5 45.75C93.31 46.4 93.08 47.25 93.01 47.62C92.83 48.46 91.99 51.05 91.42 52.52C91.19 53.11 91 53.68 91 53.77C91 53.87 90.81 54.34 90.58 54.82C90.35 55.3 90.09 55.91 90.01 56.19C89.92 56.46 89.69 57 89.49 57.38C89.3 57.75 88.77 58.82 88.32 59.75C86.51 63.43 85.03 65.89 82.64 69.12C78.9 74.19 73.82 79.17 69.01 82.5C68.66 82.74 68.01 83.19 67.57 83.5C67.13 83.81 66.39 84.29 65.94 84.56C65.49 84.84 64.85 85.24 64.52 85.45C64.19 85.67 63.63 86.01 63.26 86.2C62.9 86.4 62.18 86.8 61.65 87.09C60.32 87.81 58 88.95 57.62 89.06C57.45 89.11 56.97 89.35 56.55 89.58C56.13 89.81 55.72 90 55.64 90C55.55 90 55.17 90.15 54.78 90.33C54.39 90.52 53.56 90.85 52.94 91.07C52.32 91.29 51.48 91.61 51.06 91.79C50.16 92.18 49.59 92.21 49.26 91.89Z"/></svg>
+<div class="page">
+
+<header class="mast">
+  <div class="mast-mark">
+    <svg class="wheat" data-wheat viewBox="0 0 110 444" aria-hidden="true"></svg>
+    <div>
+      <p class="eyebrow">Good Grain Creative</p>
+      <h1 class="mast-title">Church Finder</h1>
+    </div>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Two ways to look">
+    <button class="tab" type="button" role="tab" data-tab="finder" aria-selected="true">Finder</button>
+    <button class="tab" type="button" role="tab" data-tab="matcher" aria-selected="false">Matcher</button>
+  </div>
+</header>
+
+<!-- Start: where are you? -->
+<section class="start" id="v-start">
+  <div class="hero">
+    <div class="hero-copy">
+      <h2 class="title">Find a church <span class="hl">near you.</span></h2>
+      <p class="lede">See the churches around you, from every major tradition. Then, if you like, tell us a little about your story with church and we'll point to the ones most likely to feel like home.</p>
+      <ul class="facts">
+        <li class="fact"><b class="num" id="fact-count">434,000+</b><span>churches listed</span></li>
+        <li class="fact"><b class="num">19</b><span>traditions</span></li>
+        <li class="fact"><b class="num">50</b><span>states, plus D.C.</span></li>
+      </ul>
+    </div>
+    <div class="slab">
+      <p class="slab-label">Start here</p>
+      <p class="slab-head">Where should we look?</p>
+      <button class="btn ink big" type="button" id="btn-locate">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8-8 18-2-8z"/></svg>
+        <span>Use my location</span>
+      </button>
+      <p class="or">or</p>
+      <form class="where" id="where-form" autocomplete="off">
+        <label for="where">ZIP code or city</label>
+        <div class="where-row">
+          <input id="where" name="where" type="text" inputmode="text" autocapitalize="words" spellcheck="false" placeholder="37064 or Franklin, TN" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="suggest">
+          <button class="btn ink" type="submit">Search</button>
+        </div>
+        <ul class="suggest" id="suggest" role="listbox" hidden></ul>
+      </form>
+      <p class="slab-fine" id="where-msg" aria-live="polite">Your location is used on this device to measure distance. It isn't saved, and it isn't sent to us.</p>
+    </div>
+  </div>
+</section>
+
+<section class="teaser" id="teaser">
+  <div>
+    <p class="eyebrow">Church Matcher</p>
+    <h3>Not sure what kind of church fits you?</h3>
+    <p>Six short questions about where you've been and what you're looking for. We'll show which traditions line up with your answers, and which churches near you belong to them.</p>
+    <p class="steps" aria-hidden="true"><span>your story</span><span>traditions you know</span><span>anything to leave out</span><span>worship</span><span>what matters</span><span>convictions</span></p>
+  </div>
+  <button class="btn gold" type="button" data-tab="matcher" id="btn-teaser">Take the Matcher &#183; 2 minutes</button>
+</section>
+
+<!-- Results: the list and the map -->
+<section class="app" id="v-app" hidden>
+  <div class="bar">
+    <div class="bar-where">
+      <p class="eyebrow" id="bar-eyebrow">Churches near</p>
+      <h2 class="bar-place" id="bar-place"></h2>
+      <p class="row"><span class="sub" id="bar-sub"></span><button class="link" type="button" id="btn-change">Change location</button></p>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label">Within</span>
+      <div class="chips" id="radius-chips" role="group" aria-label="Distance"></div>
+    </div>
+    <div class="ctl" id="sort-ctl" hidden>
+      <span class="ctl-label">Order by</span>
+      <div class="chips" role="group" aria-label="Order">
+        <button class="chip" type="button" data-sort="match" aria-pressed="false">Best fit</button>
+        <button class="chip" type="button" data-sort="near" aria-pressed="false">Nearest</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="fit" id="fit" hidden></div>
+
+  <div class="filters">
+    <div class="trads" id="trad-chips" role="group" aria-label="Tradition"></div>
+    <div class="tools">
+      <input class="search" id="q" type="search" placeholder="Search these by church name" aria-label="Search these churches by name">
+      <label class="check"><input type="checkbox" id="only-exact"><span>Only churches placed exactly on the map</span></label>
+    </div>
+  </div>
+
+  <div class="banner" id="banner" hidden></div>
+  <p class="count" id="count" aria-live="polite"></p>
+
+  <div class="cols">
+    <div class="listcol" id="listcol">
+      <ol class="list" id="list"></ol>
+      <div class="more-row"><button class="btn line small" type="button" id="btn-more" hidden>Show more</button></div>
+      <div class="empty" id="empty" hidden></div>
+    </div>
+    <div class="mapcol">
+      <div class="map" id="map"></div>
+      <p class="map-key" id="map-key"></p>
+    </div>
+  </div>
+</section>
+
+<!-- Matcher: the questions -->
+<section class="quiz" id="v-quiz" hidden>
+  <div class="quiz-box">
+    <div class="quiz-top">
+      <p class="row"><span class="eyebrow" id="quiz-step"></span><button class="link" type="button" id="quiz-close">Close</button></p>
+      <div class="progress" aria-hidden="true"><span id="quiz-bar"></span></div>
+    </div>
+    <div class="q-body" id="quiz-body"></div>
+    <div class="quiz-nav">
+      <button class="btn line" type="button" id="quiz-back">Back</button>
+      <button class="btn ink" type="button" id="quiz-next">Next</button>
+    </div>
+    <p class="note">Your answers stay on this device. Nothing here is saved, sold or sent to us.</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <p id="about-data"></p>
+  <div class="foot-row">
+    <a class="link" id="add-church" href="#">Pastors: add or correct your church's listing</a>
+    <span class="made"><svg class="wheat" data-wheat viewBox="0 0 110 444" aria-hidden="true"></svg>Made by Good Grain Creative</span>
+  </div>
+</footer>
+
+</div>
+</div>
+</template>
+<script>
+(() => {
+'use strict';
+/* Good Grain Creative \u00b7 Church Finder
+   One widget, two experiences on the same list of churches:
+     Finder   where am I, and what is around me
+     Matcher  six questions, then the same churches ordered by how well their tradition fits the answers
+   Nothing a visitor types or shares leaves their browser. The church list is read from small static files. */
+
+const HOST_ID = 'ggc-church-finder';
+const host = document.getElementById(HOST_ID);
+const tpl = document.getElementById(HOST_ID + '-template');
+if (!host || !tpl || host.shadowRoot) return;
+const root = host.attachShadow({ mode: 'open' });
+root.appendChild(tpl.content.cloneNode(true));
+const $ = (s, el = root) => el.querySelector(s);
+const $$ = (s, el = root) => Array.from(el.querySelectorAll(s));
+
+const CFG = {
+  data: (host.dataset.url || './data/').replace(/\/?$/, '/'),
+  contact: host.dataset.contact || '',
+  form: host.dataset.form || '',                   // the "add or correct a listing" form
+  mapJs: 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js',
+  mapCss: 'https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css',
+  tiles: 'https://tiles.openfreemap.org',
+};
+const TR = {"worshipScale":[{"v":0,"label":"Liturgical","desc":"Set prayers, robes, communion every week"},{"v":1,"label":"Traditional","desc":"Hymns, a choir or organ, a sermon"},{"v":2,"label":"Blended","desc":"Some hymns, some newer songs"},{"v":3,"label":"Contemporary","desc":"A band, casual dress, screens"},{"v":4,"label":"Expressive","desc":"Long stretches of praise, hands raised, prayer for healing"}],"emphases":[{"id":"teaching","label":"Bible teaching that goes deep","short":"deep Bible teaching"},{"id":"sacrament","label":"Communion and liturgy","short":"communion and liturgy"},{"id":"spirit","label":"Prayer, healing and the Spirit at work","short":"prayer and the Spirit's work"},{"id":"justice","label":"Serving neighbors, justice and mercy","short":"serving neighbors"},{"id":"roots","label":"Ancient roots and creeds","short":"historic roots"},{"id":"questions","label":"Room for questions and doubts","short":"room for questions"},{"id":"discipleship","label":"Growing as a disciple","short":"growing as a disciple"},{"id":"mission","label":"Reaching people who don't know Jesus","short":"reaching new people"},{"id":"quiet","label":"Stillness and reflection","short":"stillness and reflection"}],"traditions":[{"id":"adventist","label":"Adventist","includes":"Seventh-day Adventist, Church of God (Seventh Day), Advent Christian","expect":"Most Adventists worship on Saturday, the seventh-day Sabbath. Expect a Bible study hour followed by a service with hymns and a sermon.","ws":[1,2.5],"p":"traditional","w":"varies","e":["teaching","discipleship","mission"]},{"id":"baptist","label":"Baptist","includes":"Southern Baptist, American Baptist, Independent, Free Will, Converge","expect":"Preaching from the Bible is the center of the service, with singing that ranges from hymns to a full band. Baptism is by immersion, for people old enough to profess their own faith.","ws":[1,3.2],"p":"leans","w":"varies","e":["teaching","mission","discipleship"]},{"id":"brethren","label":"Brethren & Free Church","includes":"Church of the Brethren, Brethren in Christ, Moravian, Evangelical Free, Evangelical Covenant","expect":"Simple, Bible-centered worship with a strong sense of community. This family grew out of European renewal movements that prized a lived, personal faith.","ws":[1.5,3],"p":"leans","w":"varies","e":["teaching","discipleship","mission"]},{"id":"catholic","label":"Catholic","includes":"Roman Catholic and Eastern Catholic churches","expect":"The Mass follows a set liturgy and the Eucharist is celebrated at every service. Expect Scripture readings, a short homily, kneeling and standing, and prayers said together.","ws":[0,0.8],"p":"traditional","w":"no","e":["sacrament","roots","justice"]},{"id":"restorationist","label":"Christian / Restorationist","includes":"Churches of Christ, Disciples of Christ, independent Christian Churches","expect":"These churches aim to follow the pattern of the New Testament church. Communion is shared every Sunday, and many Churches of Christ sing without instruments.","ws":[1,2.8],"p":"leans","w":"varies","e":["teaching","sacrament","mission"]},{"id":"congregational","label":"Congregational","includes":"United Church of Christ, Congregational Christian churches","expect":"Each congregation governs itself. Services are usually traditional in form, with hymns, prayers and a sermon, and many congregations put a strong emphasis on service and welcome.","ws":[0.8,1.8],"p":"mixed","w":"yes","e":["justice","questions","roots"]},{"id":"anglican","label":"Episcopal / Anglican","includes":"Episcopal Church, Anglican Church in North America, continuing Anglican churches","expect":"Worship follows the Book of Common Prayer: Scripture readings, prayers said together, a sermon, and communion most Sundays. Some parishes are formal, with choir and incense; others are relaxed.","ws":[0,1.2],"p":"mixed","w":"varies","e":["sacrament","roots","questions"]},{"id":"friends","label":"Friends (Quaker)","includes":"Friends meetings and Friends churches","expect":"Some Friends meetings gather in silence, with anyone free to speak as they feel led. Others, often called Friends churches, have a pastor, singing and a sermon.","ws":[0.8,2],"p":"mixed","w":"yes","e":["quiet","justice","questions"]},{"id":"bible","label":"Bible Church","includes":"Independent Bible churches and fellowships","expect":"Independent churches built around verse-by-verse teaching of the Bible. Services are usually simple: singing, prayer and a longer sermon.","ws":[1.2,2.8],"p":"traditional","w":"no","e":["teaching","mission","discipleship"]},{"id":"holiness","label":"Holiness","includes":"Nazarene, Wesleyan, Christian and Missionary Alliance, Church of God (Anderson), Salvation Army","expect":"Rooted in John Wesley's teaching that God changes hearts and lives. Services are warm and often contemporary, with an emphasis on personal faith and serving others.","ws":[1.5,3.2],"p":"traditional","w":"yes","e":["discipleship","mission","teaching"]},{"id":"lutheran","label":"Lutheran","includes":"ELCA, Missouri Synod, Wisconsin Synod, NALC, LCMC","expect":"Worship usually follows a historic liturgy with hymns, Scripture readings, a sermon centered on God's grace, and communion. Many congregations offer both a traditional and a contemporary service.","ws":[0.2,1.8],"p":"mixed","w":"varies","e":["sacrament","roots","teaching"]},{"id":"mennonite","label":"Mennonite","includes":"Mennonite Church USA, Missionary Church, Fellowship of Evangelical Churches","expect":"Part of the Anabaptist family, known for peacemaking, simple living and close community. Worship is unhurried, often with rich congregational singing.","ws":[1,2.5],"p":"mixed","w":"varies","e":["justice","discipleship","quiet"]},{"id":"methodist","label":"Methodist","includes":"United Methodist, Global Methodist, AME, AME Zion, CME, Free Methodist","expect":"A blend of structure and warmth: hymns or a band, Scripture, a sermon, and a communion table open to all, usually once a month. Methodists put faith to work through small groups and service.","ws":[0.8,2.5],"p":"mixed","w":"yes","e":["justice","discipleship","roots"]},{"id":"pentecostal","label":"Pentecostal / Charismatic","includes":"Assemblies of God, Church of God, COGIC, Foursquare, Vineyard, Calvary Chapel","expect":"Worship is energetic and expressive, with extended singing, prayer spoken aloud, and openness to gifts of the Holy Spirit such as healing and speaking in tongues.","ws":[2.8,4],"p":"traditional","w":"varies","e":["spirit","mission","discipleship"]},{"id":"presbyterian","label":"Presbyterian","includes":"PC(USA), PCA, ECO, EPC, Cumberland","expect":"Ordered, thoughtful worship with Scripture and a substantial sermon at the center. Each church is led by elders chosen by the congregation.","ws":[0.8,2.2],"p":"mixed","w":"varies","e":["teaching","roots","justice"]},{"id":"reformed","label":"Reformed","includes":"Christian Reformed, Reformed Church in America, United Reformed","expect":"Worship centers on Scripture and the sovereignty of God, with careful preaching and historic confessions of faith. Singing ranges from psalms and hymns to modern songs.","ws":[0.8,2.2],"p":"leans","w":"varies","e":["teaching","roots","discipleship"]},{"id":"orthodox","label":"Orthodox","includes":"Greek, Antiochian, Orthodox Church in America, Russian, Coptic","expect":"The Divine Liturgy is sung or chanted, much of it standing, surrounded by icons, incense and candles. The form of worship has changed little in many centuries.","ws":[0,0.3],"p":"traditional","w":"no","e":["sacrament","roots","quiet"]},{"id":"nondenom","label":"Non-denominational","includes":"Independent and community churches","expect":"Independent churches with no denominational ties. Most have a contemporary service with a band and a practical, Bible-based message, though each one is different.","ws":[2.2,3.8],"p":"leans","w":"varies","e":["mission","teaching","discipleship"]},{"id":"other","label":"Other","includes":"Groups outside the families above","expect":"Groups that don't fit the families above. Open a listing to see its own name and website.","match":false},{"id":"unlisted","label":"Tradition not listed","includes":"Our records don't say","expect":"Our records don't say which tradition this church belongs to. Its website or a phone call is the best way to find out.","match":false}],"denominations":{"Southern Baptist Convention":{"ws":[1.2,3.2],"p":"traditional","w":"no"},"Independent Baptist":{"ws":[1,1.8],"p":"traditional","w":"no"},"American Baptist Churches in the USA":{"ws":[1,2.5],"p":"mixed","w":"yes","e":["mission","justice","teaching"]},"National Association of Free Will Baptists":{"ws":[1,2.2],"p":"traditional","w":"no"},"American Baptist Association":{"ws":[1,1.8],"p":"traditional","w":"no"},"General Association of Regular Baptist Churches":{"ws":[1,2],"p":"traditional","w":"no"},"Cooperative Baptist Fellowship":{"ws":[1,2.2],"p":"mixed","w":"yes","e":["mission","justice","questions"]},"General Baptist":{"p":"traditional"},"North American Baptist Conference":{"p":"traditional"},"Seventh Day Baptist General Conference":{"p":"traditional","w":"yes","note":"Worships on Saturday, the seventh day."},"Alliance of Baptists":{"ws":[1,2],"p":"affirming","w":"yes","e":["justice","questions","mission"]},"Missionary Baptist":{"p":"traditional"},"Primitive Baptist":{"ws":[1,1],"p":"traditional","w":"no","note":"Sings without instruments."},"Reformed Baptist (Other)":{"ws":[1,2],"p":"traditional","w":"no"},"Venture Church Network":{"ws":[2,3.2],"p":"traditional"},"Converge Worldwide":{"ws":[2,3.2],"p":"traditional"},"United Methodist Church":{"ws":[0.8,2.5],"p":"mixed","w":"yes"},"Global Methodist Church":{"ws":[1,2.8],"p":"traditional","w":"yes","e":["discipleship","teaching","mission"]},"African Methodist Episcopal Church":{"ws":[1.5,3.5],"p":"traditional","w":"yes","e":["justice","roots","discipleship"]},"African Methodist Episcopal Zion Church":{"ws":[1.5,3.5],"p":"traditional","w":"yes","e":["justice","roots","discipleship"]},"Christian Methodist Episcopal Church":{"ws":[1.5,3.5],"p":"traditional","w":"yes","e":["justice","roots","discipleship"]},"Free Methodist Church of North America":{"ws":[1.5,3],"p":"traditional","w":"yes","e":["discipleship","justice","mission"]},"Congregational Methodist Church":{"p":"traditional","w":"varies"},"Evangelical Methodist Church":{"p":"traditional","w":"varies"},"Primitive Methodist Church in the USA":{"p":"traditional","w":"varies"},"Evangelical Church of North America":{"p":"traditional","w":"varies"},"Church of the Nazarene":{"ws":[1.5,3],"p":"traditional","w":"yes"},"Wesleyan Church":{"ws":[2,3.2],"p":"traditional","w":"yes"},"Christian and Missionary Alliance":{"ws":[2,3.2],"p":"traditional","w":"varies","e":["mission","discipleship","spirit"],"note":"Since 2023 women can be ordained and called pastor. Lead pastors and elders are men."},"Church of God (Anderson, IN)":{"ws":[1.5,3],"p":"traditional","w":"yes"},"Salvation Army":{"ws":[1.2,2.5],"p":"traditional","w":"yes","e":["justice","discipleship","mission"],"note":"Does not practice communion or water baptism. Known for brass bands and for serving people in need."},"Churches of Christ in Christian Union":{"p":"traditional"},"International Conservative Holiness Association":{"ws":[1,1.8],"p":"traditional"},"Church of God (Holiness)":{"ws":[1,1.8],"p":"traditional"},"Church of God (Cleveland, TN)":{"ws":[2.8,4],"p":"traditional","w":"yes","note":"Women serve as pastors. The rank of bishop is reserved for men."},"Assemblies of God":{"ws":[3,4],"p":"traditional","w":"yes"},"Church of God in Christ":{"ws":[3,4],"p":"traditional","w":"no","note":"Women serve as evangelists and missionaries. The offices of elder, pastor and bishop are held by men."},"International Church of the Foursquare Gospel":{"ws":[3,4],"p":"traditional","w":"yes"},"Church of God of Prophecy":{"ws":[2.8,4],"p":"traditional","w":"yes","note":"Women serve as pastors. The rank of bishop is reserved for men."},"Pentecostal Church of God":{"ws":[3,4],"p":"traditional"},"Redeemed Christian Church of God":{"ws":[3,4],"p":"traditional","w":"yes"},"International Pentecostal Holiness Church":{"ws":[3,4],"p":"traditional","w":"yes"},"United Pentecostal Church International":{"ws":[3,4],"p":"traditional","w":"yes","note":"A Oneness Pentecostal church: baptizes in the name of Jesus."},"Congregational Holiness Church":{"p":"traditional"},"Church of God by Faith":{"p":"traditional"},"International Pentecostal Church of Christ":{"p":"traditional"},"Church of God of the Mountain Assembly":{"p":"traditional"},"Open Bible Standard Churches":{"p":"traditional","w":"yes"},"Calvary Chapel":{"ws":[2.5,3.2],"p":"traditional","w":"no","e":["teaching","mission","discipleship"],"note":"Known for teaching through the Bible verse by verse."},"Association of Vineyard Churches":{"ws":[3,4],"p":"traditional","w":"yes","e":["spirit","mission","justice"]},"Evangelical Lutheran Church in America":{"ws":[0,1.8],"p":"affirming","w":"yes","e":["sacrament","justice","roots"]},"Lutheran Church Missouri Synod":{"ws":[0,1.5],"p":"traditional","w":"no"},"Wisconsin Evangelical Lutheran Synod":{"ws":[0,1.2],"p":"traditional","w":"no"},"North American Lutheran Church":{"p":"traditional","w":"yes"},"Lutheran Congregations in Mission for Christ":{"p":"traditional","w":"yes"},"Association of Free Lutheran Congregations":{"p":"traditional","w":"no"},"Church of the Lutheran Brethren":{"p":"traditional","w":"no"},"Church of the Lutheran Confession":{"p":"traditional","w":"no"},"American Association of Lutheran Churches":{"p":"traditional","w":"no"},"Apostolic Lutheran Church of America":{"p":"traditional","w":"no"},"Presbyterian Church USA":{"ws":[0.8,2],"p":"affirming","w":"yes","e":["justice","roots","questions"]},"Presbyterian Church in America":{"ws":[0.8,2.2],"p":"traditional","w":"no","e":["teaching","roots","discipleship"]},"Evangelical Presbyterian Church":{"ws":[1,2.5],"p":"traditional","w":"varies","e":["teaching","mission","roots"]},"ECO: A Covenant Order of Evangelical Presbyterians":{"ws":[1.2,3],"p":"traditional","w":"yes","e":["mission","teaching","discipleship"]},"Cumberland Presbyterian Church":{"p":"traditional","w":"yes"},"Associate Reformed Presbyterian Church":{"p":"traditional","w":"no","e":["teaching","roots","discipleship"]},"Orthodox Presbyterian Church":{"ws":[0.8,1.2],"p":"traditional","w":"no","e":["teaching","roots","discipleship"]},"Reformed Presbyterian Church of North America":{"ws":[1,1],"p":"traditional","w":"no","e":["teaching","roots","discipleship"],"note":"Sings psalms without instruments."},"Free Presbyterian Church of North America":{"ws":[1,1.2],"p":"traditional","w":"no"},"Covenant Reformed Presbyterian Church":{"p":"traditional","w":"no"},"Christian Reformed Church in North America":{"ws":[1,2.5],"p":"traditional","w":"varies"},"Christian Reformed Church":{"ws":[1,2.5],"p":"traditional","w":"varies"},"Reformed Church in America":{"ws":[1,2.5],"p":"mixed","w":"yes"},"Confederation of Reformed Evangelicals":{"ws":[0.5,1.5],"p":"traditional","w":"no"},"Fellowship of Independent Reformed Evangelicals":{"ws":[1,2],"p":"traditional","w":"no"},"United Reformed Churches in North America":{"ws":[0.8,1.5],"p":"traditional","w":"no"},"Protestant Reformed Churches In America":{"ws":[1,1.2],"p":"traditional","w":"no"},"Churches of Christ":{"ws":[1,1.6],"p":"traditional","w":"no","note":"Most congregations sing without instruments and share communion every Sunday."},"Christian Church (Disciples of Christ)":{"ws":[0.8,2.2],"p":"mixed","w":"yes","e":["sacrament","justice","questions"],"note":"Communion every Sunday, open to all who believe."},"Christian Churches and Churches of Christ":{"ws":[2,3.2],"p":"traditional","note":"Communion every Sunday."},"Christian Church/Church of Christ (Independent)":{"ws":[2,3.2],"p":"traditional","note":"Communion every Sunday."},"United Church of Christ":{"ws":[0.8,1.8],"p":"affirming","w":"yes"},"Conservative Congregational Christian Conference":{"p":"traditional","w":"varies","e":["teaching","roots","mission"]},"National Association of Congregational Christian Churches":{"p":"mixed","w":"varies"},"Roman Catholic Church":{},"Maronite Catholic Church":{"ws":[0,0.3],"note":"An Eastern Catholic church in communion with Rome. The liturgy follows an Eastern rite."},"Chaldean Catholic Church":{"ws":[0,0.3],"note":"An Eastern Catholic church in communion with Rome. The liturgy follows an Eastern rite."},"Ukrainian Catholic Church":{"ws":[0,0.3],"note":"An Eastern Catholic church in communion with Rome. The liturgy follows an Eastern rite."},"Episcopal Church":{"ws":[0,1],"p":"affirming","w":"yes","e":["sacrament","justice","questions"]},"Anglican Church in North America":{"ws":[0,2.2],"p":"traditional","w":"varies","e":["sacrament","teaching","roots"]},"Anglican Catholic Church":{"ws":[0,0.3],"p":"traditional","w":"no"},"International Communion of the Charismatic Episcopal Church":{"ws":[0,2],"p":"traditional","w":"no","e":["sacrament","spirit","roots"]},"Anglican Province of Christ the King":{"ws":[0,0.3],"p":"traditional","w":"no"},"Anglican Province of America":{"ws":[0,0.3],"p":"traditional","w":"no"},"Reformed Episcopal Church":{"ws":[0,1],"p":"traditional","w":"no"},"Seventh Day Adventist Church":{"note":"Worships on Saturday, the Sabbath."},"Church of God (Seventh Day)":{"note":"Worships on Saturday, the Sabbath."},"Advent Christian General Conference":{},"Evangelical Free Church of America":{"ws":[2,3.2],"p":"traditional","w":"no","e":["teaching","mission","discipleship"]},"Evangelical Covenant Church":{"ws":[1.5,3],"p":"traditional","w":"yes","e":["mission","justice","discipleship"]},"Moravian Church In America":{"ws":[0.5,1.8],"p":"mixed","w":"yes","e":["roots","justice","discipleship"]},"Moravian Church":{"ws":[0.5,1.8],"p":"mixed","w":"yes","e":["roots","justice","discipleship"]},"Church of the Brethren":{"ws":[1,2.2],"p":"mixed","w":"yes","e":["justice","discipleship","quiet"]},"Brethren in Christ":{"p":"traditional","w":"yes"},"Brethren Church":{"p":"traditional","w":"varies"},"Charis Fellowship (FGBC)":{"p":"traditional","w":"no"},"Fellowship of Grace Brethren Churches":{"p":"traditional","w":"no"},"Mennonite Church USA":{"p":"mixed","w":"yes"},"Missionary Church":{"ws":[2,3.2],"p":"traditional","e":["mission","discipleship","teaching"]},"Fellowship of Evangelical Churches":{"ws":[2,3],"p":"traditional","e":["mission","discipleship","teaching"]},"Fellowship of Evangelical Bible Churches":{"p":"traditional","e":["teaching","mission","discipleship"]},"Religious Society of Friends":{},"Friends Southwest":{"ws":[2,3],"p":"traditional","e":["mission","discipleship","quiet"]},"Bible Fellowship Church":{},"Bible Church":{},"Greek Orthodox Archdiocese of America":{},"Greek Orthodox Archdiocese":{},"Orthodox Church In America":{},"Orthodox Church in America":{},"Antiochian Orthodox Christian Archdiocese of North America":{},"Russian Orthodox Church":{},"Romanian Orthodox Church":{},"Serbian Orthodox Church":{},"Eastern Orthodox":{},"Coptic Orthodox Church":{"note":"An Oriental Orthodox church with roots in Egypt."},"Ethiopian Orthodox Tewahedo Church":{"note":"An Oriental Orthodox church with roots in Ethiopia."},"Nondenominational":{},"Community Church":{},"Independent Christian":{},"Evangelical (Other)":{},"Unitarian Universalist Association":{},"Sovereign Grace Churches":{},"Community of Christ":{},"Church of Christ, Scientist":{},"La_Luz_Del_Mundo":{},"Iglesia_Ni_Cristo":{},"Messianic_Jewish":{},"Unity":{},"Swedenborgian":{},"Assyrian":{}}};                     // source/traditions.json, put here by build.py
+const TRAD = Object.fromEntries(TR.traditions.map((t) => [t.id, t]));
+const EMPH = Object.fromEntries(TR.emphases.map((e) => [e.id, e]));
+const PICKABLE = TR.traditions.filter((t) => t.match !== false).sort((a, b) => a.label.localeCompare(b.label));
+const RADII = [2, 5, 10, 25, 50];
+const PAGE = 40;
+const STORE = 'ggc-church-finder';
+const DEBUG = new URLSearchParams(window.location.search).get('debug') === '1';   // ?debug=1 exposes the state for testing
+const STATE_NAMES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'Washington, D.C.', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming', PR: 'Puerto Rico', GU: 'Guam', VI: 'U.S. Virgin Islands', AS: 'American Samoa', MP: 'Northern Mariana Islands' };
+
+const blankAnswers = () => ({ stage: null, known: [], similar: null, avoid: [], worship: null, care: [], marriage: null, women: null });
+const S = {
+  tab: 'finder', view: 'start', origin: null, radius: 10, auto: true,
+  all: [], base: [], shown: [], pool: null, split: -1, hiddenAvoid: 0, showAvoided: false,
+  trad: null, q: '', onlyExact: false, sort: 'near', page: 1, sel: null, spot: null,
+  answers: blankAnswers(), hasProfile: false, pendingMatch: false, step: 0, backTo: 'start',
+  loading: false, error: '', token: 0,
+};
+
+/* ------------------------------------------------------------------ small helpers */
+const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = (n) => Number(n).toLocaleString('en-US');
+const RAD = Math.PI / 180;
+function miles(a, b, c, d) {
+  const x = Math.sin((c - a) * RAD / 2) ** 2 + Math.cos(a * RAD) * Math.cos(c * RAD) * Math.sin((d - b) * RAD / 2) ** 2;
+  return 7917.6 * Math.asin(Math.sqrt(x));
+}
+function compass(a, b, c, d) {
+  const y = Math.sin((d - b) * RAD) * Math.cos(c * RAD);
+  const x = Math.cos(a * RAD) * Math.sin(c * RAD) - Math.sin(a * RAD) * Math.cos(c * RAD) * Math.cos((d - b) * RAD);
+  return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((Math.atan2(y, x) / RAD + 360) % 360) / 45) % 8];
+}
+/* A link to the listing form, carrying what we already know about the church so nobody has to retype it. */
+function formLink(fields) {
+  const extra = Object.entries(fields).filter(([, v]) => v).map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&');   // %20, never +
+  return CFG.form + (extra ? (CFG.form.includes('?') ? '&' : '?') + extra : '');
+}
+const fmtDist = (d) => (d < 9.95 ? d.toFixed(1) : String(Math.round(d)));
+const fmtPhone = (p) => `(${p.slice(0, 3)}) ${p.slice(3, 6)}-${p.slice(6)}`;
+const normPlace = (s) => s.toLowerCase().replace(/[.']/g, '').replace(/\bsaint\b/g, 'st').replace(/\bmount\b/g, 'mt').replace(/\bfort\b/g, 'ft').replace(/\s+/g, ' ').trim();
+function save() {
+  try {
+    sessionStorage.setItem(STORE, JSON.stringify({ a: S.answers, p: S.hasProfile, o: S.origin, r: S.radius, auto: S.auto, tab: S.tab }));
+  } catch (e) { /* private window: carry on without it */ }
+}
+function restore() {
+  try {
+    const d = JSON.parse(sessionStorage.getItem(STORE) || 'null');
+    if (!d) return;
+    S.answers = Object.assign(blankAnswers(), d.a || {});
+    S.hasProfile = !!d.p; S.origin = d.o || null; S.radius = d.r || 10; S.auto = d.auto !== false;
+    S.tab = d.tab === 'matcher' && S.hasProfile ? 'matcher' : 'finder';
+    S.sort = S.tab === 'matcher' && hasAnswers(S.answers) ? 'match' : 'near';
+  } catch (e) { /* nothing saved */ }
+}
+
+/* ------------------------------------------------------------------ the church files */
+let INDEX = null;
+let SPLITS = null;
+const tiles = new Map();
+const lookups = new Map();
+async function getJSON(path) {
+  const r = await fetch(CFG.data + path);
+  if (!r.ok) throw new Error(path + ' ' + r.status);
+  return r.json();
+}
+function cached(path) {
+  if (!lookups.has(path)) lookups.set(path, getJSON(path).catch((e) => { lookups.delete(path); throw e; }));
+  return lookups.get(path);
+}
+async function loadIndex() {
+  if (!INDEX) {
+    INDEX = await cached('index.json');
+    SPLITS = new Set(INDEX.splits);
+    $('#fact-count').textContent = num(INDEX.count);
+    renderFoot();
+  }
+  return INDEX;
+}
+function toChurch(r, i, key) {
+  return { lat: r[0], lng: r[1], name: r[2], d: r[3], locq: r[4] & 3, status: (r[4] >> 2) & 3, inferred: !!(r[4] & 16), near: !!(r[4] & 32),
+    street: r[5], city: r[6], st: r[7], zip: r[8], phone: r[9], web: r[10], id: r[11], uid: r[11] ? String(r[11]) : key + ':' + i };
+}
+function loadTile(key) {
+  if (!tiles.has(key)) {
+    tiles.set(key, getJSON('t/' + key.replace(/\//g, '_') + '.json').then((rows) => rows.map((r, i) => toChurch(r, i, key))).catch((e) => { tiles.delete(key); throw e; }));
+  }
+  return tiles.get(key);
+}
+/* The tiles are a quadtree. Walk it, keeping only the branches that touch the box we are searching. */
+function leavesFor(box) {
+  const out = [];
+  const size0 = INDEX.rootDeg;
+  const visit = (level, x, y) => {
+    const key = level + '/' + x + '/' + y;
+    if (key in INDEX.leaves) { out.push(key); return; }
+    if (!SPLITS.has(key)) return;
+    const size = size0 / 2 ** (level + 1);
+    for (let dx = 0; dx < 2; dx++) for (let dy = 0; dy < 2; dy++) {
+      const cx = x * 2 + dx, cy = y * 2 + dy, w = cx * size - 180, s = cy * size - 90;
+      if (w > box.e || w + size < box.w || s > box.n || s + size < box.s) continue;
+      visit(level + 1, cx, cy);
+    }
+  };
+  for (let x = Math.floor((box.w + 180) / size0); x <= Math.floor((box.e + 180) / size0); x++)
+    for (let y = Math.floor((box.s + 90) / size0); y <= Math.floor((box.n + 90) / size0); y++) visit(0, x, y);
+  return out;
+}
+async function within(o, r) {
+  const dLat = r / 69.0, dLng = r / (69.17 * Math.max(0.2, Math.cos(o.lat * RAD)));
+  const keys = leavesFor({ s: o.lat - dLat, n: o.lat + dLat, w: o.lng - dLng, e: o.lng + dLng });
+  const loaded = await Promise.all(keys.map(loadTile));
+  const out = [];
+  for (const t of loaded) for (const c of t) {
+    const d = miles(o.lat, o.lng, c.lat, c.lng);
+    if (d <= r) out.push({ c, dist: d });
+  }
+  out.sort((a, b) => a.dist - b.dist);
+  return out;
+}
+
+/* ------------------------------------------------------------------ what a tradition is like, and how it fits */
+const profiles = new Map();
+function profileOf(d) {
+  if (!profiles.has(d)) {
+    const [label, tid, key] = INDEX.denoms[d];
+    const t = TRAD[tid] || TRAD.unlisted;
+    const o = (key && TR.denominations[key]) || {};
+    profiles.set(d, { d, tid: t.id, label: label || t.label, tradLabel: t.label, specific: !!key, matchable: t.match !== false,
+      ws: o.ws || t.ws, p: o.p || t.p, w: o.w || t.w, e: o.e || t.e || [], note: o.note || '', expect: t.expect });
+  }
+  return profiles.get(d);
+}
+const WS = ['liturgical', 'traditional', 'blended', 'contemporary', 'expressive'];
+const wsPhrase = (ws) => { const a = WS[Math.round(ws[0])], b = WS[Math.round(ws[1])]; return a === b ? a : a + ' to ' + b; };
+const P_SCORE = { traditional: { traditional: 1, leans: 0.8, mixed: 0.45, affirming: 0.05 }, affirming: { affirming: 1, mixed: 0.55, leans: 0.15, traditional: 0.02 } };
+const P_TEXT = { traditional: 'Teaches marriage as between a man and a woman.', leans: 'Most hold the traditional teaching on marriage; it varies by church.', mixed: 'Congregations differ on same-sex marriage.', affirming: 'Welcomes same-sex marriage and LGBTQ clergy, though congregations differ.' };
+const W_SCORE = { yes: { yes: 1, varies: 0.5, no: 0.02 }, no: { no: 1, varies: 0.55, yes: 0.1 } };
+const W_TEXT = { yes: 'Women serve as pastors.', no: 'Pastors are men.', varies: 'Whether women pastor varies by congregation.' };
+let fitCache = new Map();
+/* Returns { score 0..1 or null, parts: [{ w, s, text }] }. Every part is a statement about the tradition or
+   denomination as a whole. Nothing here is known about a single congregation. */
+function fitOf(d) {
+  if (fitCache.has(d)) return fitCache.get(d);
+  const p = profileOf(d), A = S.answers, parts = [];
+  if (p.matchable) {
+    if (A.worship != null) {
+      const gap = A.worship < p.ws[0] ? p.ws[0] - A.worship : A.worship > p.ws[1] ? A.worship - p.ws[1] : 0;
+      const s = Math.max(0, 1 - gap / 1.6);
+      parts.push({ w: 2.5, s, text: `Worship is usually ${wsPhrase(p.ws)}${s >= 0.75 ? ', which is what you asked for.' : s >= 0.4 ? ', a step from what you asked for.' : ', not what you asked for.'}` });
+    }
+    for (const id of A.care) {
+      const i = p.e.indexOf(id);
+      parts.push({ w: 1, s: i < 0 ? 0.3 : [1, 0.9, 0.75][i] || 0.7, text: i < 0 ? '' : `Known for ${EMPH[id].short}.` });
+    }
+    if (A.marriage) parts.push({ w: 3, s: P_SCORE[A.marriage][p.p], text: P_TEXT[p.p] });
+    if (A.women) parts.push({ w: 2, s: W_SCORE[A.women][p.w], text: W_TEXT[p.w] });
+    if (A.known.length && A.similar && A.similar !== 'open') {
+      const known = A.known.includes(p.tid);
+      const s = A.similar === 'yes' ? (known ? 1 : 0.45) : (known ? 0.1 : 0.6);
+      parts.push({ w: 1.5, s, text: known ? (A.similar === 'yes' ? 'A tradition you already know.' : 'A tradition you have been part of, and you asked for something different.') : '' });
+    }
+  }
+  const total = parts.reduce((n, x) => n + x.w, 0);
+  const out = { score: total ? parts.reduce((n, x) => n + x.w * x.s, 0) / total : null, parts };
+  fitCache.set(d, out);
+  return out;
+}
+const hasAnswers = (A) => A.worship != null || A.care.length > 0 || !!A.marriage || !!A.women || (A.known.length > 0 && A.similar && A.similar !== 'open');
+const fitWord = (s) => (s >= 0.8 ? 'Strong fit' : s >= 0.6 ? 'Good fit' : s >= 0.4 ? 'Partial fit' : 'Unlikely fit');
+const matching = () => S.hasProfile && S.tab === 'matcher';
+const rank = (it) => (it.fit == null ? 0.42 : it.fit) * 100 - (Math.min(it.dist, S.radius) / S.radius) * 18 - (it.c.locq === 2 ? 4 : 0) + (it.c.status === 2 ? 2 : 0);
+
+/* ------------------------------------------------------------------ search and filter */
+async function runSearch(fitMap = true) {
+  const token = ++S.token;
+  S.loading = true; S.error = '';
+  show('app'); renderResults();
+  try {
+    await loadIndex();
+    let found = [], radius = S.radius;
+    if (S.auto) {
+      for (const r of RADII) { radius = r; found = await within(S.origin, r); if (found.length >= 20) break; }
+    } else found = await within(S.origin, radius);
+    if (token !== S.token) return;
+    S.radius = radius; S.all = found; S.loading = false; S.page = 1; S.spot = null; S.sel = null;
+    nameOrigin();
+    save(); applyFilters(); renderResults(); updateMap(fitMap);
+  } catch (e) {
+    if (token !== S.token) return;
+    S.loading = false; S.error = 'We could not load the church list just now. Check your connection and try again.';
+    renderResults();
+  }
+}
+/* "Your location" becomes "Franklin, TN" when the nearest churches agree on a city. */
+function nameOrigin() {
+  const votes = new Map();
+  for (const it of S.all.slice(0, 15)) {
+    if (!it.c.city || it.dist > 6) continue;
+    const k = it.c.city + ', ' + it.c.st;
+    votes.set(k, (votes.get(k) || 0) + 1);
+  }
+  const top = [...votes.entries()].sort((a, b) => b[1] - a[1])[0];
+  S.origin.place = top && top[1] >= 3 ? top[0] : '';
+}
+function tradFilter(it) {
+  return S.trad.startsWith('d:') ? it.c.d === +S.trad.slice(2) : profileOf(it.c.d).tid === S.trad;
+}
+function applyFilters() {
+  const avoid = new Set(S.answers.avoid);
+  let hidden = 0;
+  const base = [];
+  for (const it of S.all) {
+    if (avoid.size && !S.showAvoided && avoid.has(profileOf(it.c.d).tid)) { hidden++; continue; }
+    it.fit = S.hasProfile ? fitOf(it.c.d).score : null;
+    base.push(it);
+  }
+  S.hiddenAvoid = hidden; S.base = base;
+  let out = base;
+  if (S.spot) out = out.filter((it) => S.spot.ids.has(it.c.uid));
+  if (S.onlyExact) out = out.filter((it) => it.c.locq !== 2);
+  if (S.q) {
+    const q = S.q.toLowerCase().trim();
+    out = out.filter((it) => (it.c.key || (it.c.key = (it.c.name + ' ' + it.c.city).toLowerCase())).includes(q));
+  }
+  S.pool = out;                                        // everything but the tradition filter: the chips count from this
+  if (S.trad) out = out.filter(tradFilter);
+  S.split = -1;
+  if (S.sort === 'match' && matching()) out = out.slice().sort((a, b) => rank(b) - rank(a) || a.dist - b.dist);
+  else {
+    const placed = out.filter((it) => it.c.locq !== 2), rough = out.filter((it) => it.c.locq === 2);
+    if (rough.length) S.split = placed.length;
+    out = placed.concat(rough);
+  }
+  S.shown = out;
+}
+
+/* ------------------------------------------------------------------ views */
+function show(view) {
+  S.view = view;
+  $('#v-start').hidden = view !== 'start';
+  $('#teaser').hidden = view !== 'start' || S.pendingMatch;
+  $('#v-app').hidden = view !== 'app';
+  $('#v-quiz').hidden = view !== 'quiz';
+  $$('.tab').forEach((t) => t.setAttribute('aria-selected', String(t.dataset.tab === (view === 'quiz' ? 'matcher' : S.tab))));
+  $('.slab-head').textContent = S.pendingMatch ? 'Last step: where should we look?' : 'Where should we look?';
+  $('.slab-label').textContent = S.pendingMatch ? 'Your answers are ready' : 'Start here';
+}
+function originTitle() {
+  const o = S.origin;
+  if (o.kind === 'gps') return { eyebrow: 'Churches near you', place: o.place || 'Your location' };
+  if (o.kind === 'link') return { eyebrow: 'Churches near', place: o.place || 'this spot' };
+  return { eyebrow: 'Churches near', place: o.label };
+}
+function renderResults() {
+  if (!S.origin) return;
+  const t = originTitle();
+  $('#bar-eyebrow').textContent = matching() ? t.eyebrow.replace('Churches', 'Your matches') : t.eyebrow;
+  $('#bar-place').textContent = t.place;
+  $('#bar-sub').textContent = S.origin.kind === 'zip' && S.origin.place ? S.origin.place : '';
+  $('#radius-chips').innerHTML = RADII.map((r) => `<button class="chip" type="button" data-radius="${r}" aria-pressed="${r === S.radius}">${r} mi</button>`).join('');
+  $('#sort-ctl').hidden = !matching();
+  $$('[data-sort]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sort === S.sort)));
+  $('#only-exact').checked = S.onlyExact;
+  renderFit(); renderChips(); renderBanner(); renderCount(); renderList(); renderKey();
+}
+function renderChips() {
+  const el = $('#trad-chips');
+  if (S.loading || !S.pool) { el.innerHTML = ''; return; }
+  const counts = new Map();
+  for (const it of S.pool) { const id = profileOf(it.c.d).tid; counts.set(id, (counts.get(id) || 0) + 1); }
+  const order = [...counts.entries()].sort((a, b) => (a[0] === 'unlisted') - (b[0] === 'unlisted') || b[1] - a[1]);
+  let html = `<button class="chip" type="button" data-trad="" aria-pressed="${!S.trad}">All <small>${num(S.pool.length)}</small></button>`;
+  if (S.trad && S.trad.startsWith('d:')) {
+    const p = profileOf(+S.trad.slice(2));
+    html += `<button class="chip" type="button" data-trad="${esc(S.trad)}" aria-pressed="true">${esc(p.label)} <small>${num(S.shown.length)}</small></button>`;
+  }
+  html += order.map(([id, n]) => `<button class="chip" type="button" data-trad="${id}" aria-pressed="${S.trad === id}" title="${esc(TRAD[id].includes)}">${esc(TRAD[id].label)} <small>${num(n)}</small></button>`).join('');
+  el.innerHTML = html;
+}
+function renderBanner() {
+  const el = $('#banner');
+  const bits = [];
+  if (S.spot) bits.push(`<span>Showing the ${num(S.spot.ids.size)} churches pinned to one spot on the map.</span><button class="link" type="button" data-act="unspot">Show all</button>`);
+  el.hidden = !bits.length; el.innerHTML = bits.join('');
+}
+function renderCount() {
+  const el = $('#count');
+  if (S.error) { el.innerHTML = esc(S.error) + ' <button class="link" type="button" data-act="retry">Try again</button>'; return; }
+  if (S.loading) { el.textContent = 'Looking around\u2026'; return; }
+  const n = S.shown.length, all = S.base.length;
+  let text = `<b>${num(n)}</b> ${n === 1 ? 'church' : 'churches'} within ${S.radius} miles`;
+  if (n !== all) text += ` <span class="sub">(of ${num(all)})</span>`;
+  if (S.hiddenAvoid) text += ` <span class="sub">\u00b7 leaving out ${num(S.hiddenAvoid)} from traditions you asked us to skip.</span> <button class="link" type="button" data-act="show-avoided">Show them</button>`;
+  else if (S.showAvoided && S.answers.avoid.length) text += ` <button class="link" type="button" data-act="hide-avoided">Leave out the traditions I skipped</button>`;
+  el.innerHTML = text;
+}
+function renderKey() {
+  $('#map-key').innerHTML = `<span><i class="dot me"></i>you</span><span><i class="dot"></i>a church</span><span><i class="dot hollow"></i>address known, pin rough</span>` +
+    (matching() ? `<span><i class="dot gold"></i>strong fit</span>` : '');
+}
+
+/* ---- one church */
+function denLine(c, p) {
+  if (p.tid === 'unlisted') return 'Tradition not listed';
+  if (p.label && p.label !== p.tradLabel && p.tid !== 'other') return `${esc(p.label)} <span class="sub">\u00b7 ${esc(p.tradLabel)}</span>`;
+  return esc(p.label || p.tradLabel);
+}
+function locLine(c) {
+  const place = c.city ? `${c.near ? 'near ' : ''}${c.city}, ${c.st}` : (STATE_NAMES[c.st] || c.st);
+  return esc(c.street ? `${c.street}, ${place}` : place) + (c.locq === 2 ? ' \u00b7 rough pin' : '');
+}
+/* Directions go to the address. Where the record has no city, or no street, the pin itself is the better target. */
+function directions(c) {
+  const g = 'https://www.google.com/maps/';
+  if (!c.street && c.locq === 2) return { label: 'Find on Google Maps', url: g + 'search/?api=1&query=' + encodeURIComponent(`${c.name} ${c.city} ${c.st}`) };
+  const dest = c.street && c.city && !c.near ? (c.locq === 1 ? '' : c.name + ', ') + `${c.street}, ${c.city}, ${c.st} ${c.zip}`.trim() : `${c.lat},${c.lng}`;
+  return { label: 'Directions', url: g + 'dir/?api=1&destination=' + encodeURIComponent(dest) };
+}
+function mark(s) { return s >= 0.75 ? '\u2713' : s >= 0.4 ? '~' : '\u00d7'; }
+function moreHTML(it) {
+  const c = it.c, p = profileOf(c.d), dir = directions(c);
+  const acts = [`<a class="btn ink small" href="${esc(dir.url)}" target="_blank" rel="noopener">${dir.label}</a>`];
+  if (c.web) acts.push(`<a class="btn line small" href="${esc(c.web)}" target="_blank" rel="noopener nofollow">${/facebook\.com/i.test(c.web) ? 'Facebook page' : 'Website'}</a>`);
+  if (c.phone) acts.push(`<a class="btn line small" href="tel:+1${c.phone}">Call ${fmtPhone(c.phone)}</a>`);
+  const flags = [];
+  if (c.locq === 2) flags.push(c.street
+    ? `We have this church's address but couldn't place it exactly on the map, so its pin sits in the middle of ${esc(c.city || 'its city')}. The distance is to that point. Directions go to the address.`
+    : `We don't have a street location for this church, so its pin sits in the middle of ${esc(c.city || 'its city')}. The distance is to that point.`);
+  if (c.locq === 1) flags.push('This is the mailing address on record with the IRS. Small churches sometimes list an office or a home, so check where they meet before you visit.');
+  if (c.status === 0) flags.push("We haven't been able to confirm this listing is current. Call or look online before you go.");
+  let about = '';
+  if (p.tid === 'unlisted') about = `<div class="about"><h4>Tradition not listed</h4><p>${esc(p.expect)}</p></div>`;
+  else {
+    about = `<div class="about"><h4>${p.tid === 'other' ? 'About this listing' : 'What ' + esc(p.tradLabel) + ' churches are like'}</h4><p>${esc(p.expect)}</p>` +
+      (p.note ? `<p>${esc(p.note)}</p>` : '') +
+      (c.inferred ? `<p class="sub">We read this tradition from the church's name. The record itself doesn't say.</p>` : '') + '</div>';
+  }
+  let why = '';
+  if (matching()) {
+    const f = fitOf(c.d);
+    if (f.score == null) why = `<div class="about"><h4>How it fits your answers</h4><p>${p.tid === 'unlisted' ? "We can't score this one, because we don't know its tradition." : "We don't score listings in this group."}</p></div>`;
+    else {
+      const lines = f.parts.filter((x) => x.text).sort((a, b) => b.w - a.w).map((x) => `<li><span class="mk" aria-hidden="true">${mark(x.s)}</span><span>${esc(x.text)}</span></li>`).join('');
+      why = `<div class="about"><p class="why-head"><span class="pill ${f.score >= 0.75 ? 'gold' : ''}">${Math.round(f.score * 100)}%</span><b>${fitWord(f.score)} with your answers</b></p><ul class="why">${lines}</ul>` +
+        `<p class="sub">${p.specific ? 'Based on what is typical for this denomination (' + esc(p.label) + ').' : 'Based on what is typical of ' + esc(p.tradLabel) + " churches; this church's own affiliation isn't on record."} Every congregation is different.</p></div>`;
+    }
+  }
+  const status = c.status === 2 ? 'Confirmed active' : c.status === 1 ? 'Listed as active' : 'Not yet verified';
+  const fixUrl = CFG.form
+    ? formLink({ type: 'Correct a listing', church: c.name, place: c.city && !c.near ? `${c.city}, ${c.st}` : c.st, listing: c.id ? String(c.id) : '',
+      // "Listed as" on the board: how the listing reads today, so a request that changes the name still shows the old one.
+      denomination: [c.name, c.street, p.tid === 'unlisted' ? 'tradition not listed' : p.label].filter(Boolean).join(' | '), source: 'Church Finder listing' })
+    : CFG.contact ? `mailto:${CFG.contact}?subject=${encodeURIComponent('Church Finder correction: ' + c.name + (c.id ? ' (listing ' + c.id + ')' : ''))}` : '';
+  const fix = fixUrl ? ` \u00b7 <a class="link" href="${esc(fixUrl)}"${CFG.form ? ' target="_blank" rel="noopener"' : ''}>Something wrong? Tell us</a>` : '';
+  return `<div class="card-more"><div class="acts">${acts.join('')}</div>` + flags.map((f) => `<p class="flag">${f}</p>`).join('') + why + about +
+    `<p class="record">${status}${c.id ? ' \u00b7 listing ' + c.id : ''}${fix}</p></div>`;
+}
+function cardHTML(it) {
+  const c = it.c, p = profileOf(c.d), open = S.sel === c.uid;
+  if (!it.dir) it.dir = compass(S.origin.lat, S.origin.lng, c.lat, c.lng);
+  let badge = '';
+  if (matching()) badge = it.fit == null ? '<span class="pill soft">no score</span>' : `<span class="pill ${it.fit >= 0.75 ? 'gold' : ''}" title="${fitWord(it.fit)}">${Math.round(it.fit * 100)}% fit</span>`;
+  return `<li class="card" data-id="${esc(c.uid)}"${open ? ' data-open' : ''}><button class="card-main" type="button" aria-expanded="${open}">` +
+    `<span class="card-text"><span class="card-name">${esc(c.name)}</span><span class="card-den${p.tid === 'unlisted' ? ' none' : ''}">${denLine(c, p)}</span><span class="card-loc">${locLine(c)}</span></span>` +
+    `<span class="card-side"><span class="dist num">${c.locq === 2 ? (it.dist < 1 ? '&lt;1' : '~' + Math.round(it.dist)) : fmtDist(it.dist)}<small>mi${c.locq === 2 && it.dist < 1 ? '' : ' ' + it.dir}</small></span>${badge}</span></button>${open ? moreHTML(it) : ''}</li>`;
+}
+function renderList() {
+  const list = $('#list'), empty = $('#empty'), more = $('#btn-more');
+  if (S.loading) { list.innerHTML = '<li class="skel"></li>'.repeat(6); empty.hidden = true; more.hidden = true; return; }
+  if (S.error) { list.innerHTML = ''; empty.hidden = true; more.hidden = true; return; }
+  const rows = S.shown.slice(0, S.page * PAGE);
+  const rough = S.shown.length - S.split;
+  const divider = `<li class="divider"><b>${num(rough)}${S.split > 0 ? ' more' : ''} with a rough pin</b><span>We have each address but couldn't place it exactly on the map, so its pin sits in the middle of its city or ZIP code. The distance is only a guide.</span></li>`;
+  list.innerHTML = rows.map((it, i) => (i === S.split ? divider : '') + cardHTML(it)).join('');
+  more.hidden = rows.length >= S.shown.length;
+  more.textContent = `Show ${Math.min(PAGE, S.shown.length - rows.length)} more`;
+  empty.hidden = S.shown.length > 0;
+  if (!S.shown.length) {
+    empty.innerHTML = S.all.length
+      ? `<h3>Nothing matches those filters.</h3><p>There are ${num(S.base.length)} churches within ${S.radius} miles.</p><button class="btn ink small" type="button" data-act="clear-filters">Clear the filters</button>`
+      : `<h3>No churches in our records within ${S.radius} miles.</h3><p>Try a wider distance or another place.</p>` + (S.radius < 50 ? `<button class="btn ink small" type="button" data-radius="50">Look within 50 miles</button>` : '');
+  }
+}
+function select(uid, from) {
+  S.sel = S.sel === uid && from !== 'map' ? null : uid;
+  if (S.sel) {
+    const i = S.shown.findIndex((it) => it.c.uid === uid);
+    if (i >= S.page * PAGE) S.page = Math.ceil((i + 1) / PAGE);
+  }
+  renderList(); showSelected();
+  if (S.sel && from === 'map') {
+    const el = $(`.card[data-id="${CSS.escape(uid)}"]`);
+    if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+}
+
+/* ---- the Matcher's summary above the list */
+function renderFit() {
+  const el = $('#fit');
+  el.hidden = !matching() || S.loading || !!S.error;
+  if (el.hidden) return;
+  const groups = new Map();
+  for (const it of S.base) groups.set(it.c.d, (groups.get(it.c.d) || 0) + 1);
+  const ranked = [...groups.entries()].map(([d, n]) => ({ d, n, p: profileOf(d), f: fitOf(d) })).filter((g) => g.f.score != null)
+    .sort((a, b) => b.f.score - a.f.score || b.n - a.n).slice(0, 4);
+  const A = S.answers;
+  const thin = [A.worship != null, A.care.length > 0, !!A.marriage, !!A.women, A.known.length > 0 && A.similar && A.similar !== 'open'].filter(Boolean).length <= 1;
+  const hello = { first: 'New to this? Open any church to read what a Sunday there is usually like.', back: 'Welcome back. Open any church to read what a Sunday there is usually like.' }[S.answers.stage] || '';
+  const cards = ranked.map((g, i) => {
+    const good = g.f.parts.filter((x) => x.text && x.s >= 0.75).sort((a, b) => b.w - a.w).slice(0, 2).map((x) => x.text).join(' ');
+    return `<button class="fit-card${i === 0 ? ' top' : ''}" type="button" data-trad="d:${g.d}" aria-pressed="${S.trad === 'd:' + g.d}">` +
+      `<span class="fit-top"><span class="fit-name">${esc(g.p.specific ? g.p.label : g.p.tradLabel)}</span><span class="fit-pct num">${Math.round(g.f.score * 100)}<small>%</small></span></span>` +
+      `<span class="fit-meter"><span style="--w:${Math.round(g.f.score * 100)}%"></span></span>` +
+      `<span class="fit-why">${esc(good || fitWord(g.f.score) + ' with your answers.')}</span><span class="fit-count">${num(g.n)} within ${S.radius} miles</span></button>`;
+  }).join('');
+  el.innerHTML = `<div class="fit-head"><h3>${ranked.length ? 'What fits you, close to here' : 'No scored traditions within this distance'}</h3>` +
+    `<span class="fit-foot"><button class="link" type="button" data-act="edit-answers">Change my answers</button><button class="link" type="button" data-act="clear-answers">Start over</button></span></div>` +
+    (hello ? `<p>${hello}</p>` : '') + (cards ? `<div class="fit-grid">${cards}</div>` : '') +
+    (thin ? `<p class="note"><b>You've told us one thing so far, so a lot of traditions tie.</b> <button class="link" type="button" data-act="edit-answers">Answer a few more questions</button> to tell them apart.</p>` : '') +
+    `<p class="note">Fit comes from each church's tradition or denomination, never from the congregation itself. Use it to decide where to visit first, then let the visit decide.</p>`;
+}
+function renderFoot() {
+  const built = new Date(INDEX.built + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  $('#about-data').innerHTML = `<b>About these listings.</b> ${num(INDEX.count)} churches, each with a street address on record, gathered from denominational directories, IRS records of registered churches and OpenStreetMap (\u00a9 OpenStreetMap contributors), last updated ${built}. ` +
+    `Some addresses are a church's mailing address and some pins are rough; each listing says so. Not every listing has been confirmed, so check a church's website or call before you visit.`;
+  const add = $('#add-church');
+  if (CFG.form) { add.href = formLink({ source: 'Church Finder' }); add.target = '_blank'; add.rel = 'noopener'; }
+  else if (CFG.contact) add.href = `mailto:${CFG.contact}?subject=${encodeURIComponent('Church Finder: add or correct a listing')}`;
+  else add.hidden = true;
+}
+
+/* ------------------------------------------------------------------ where: my location, a ZIP code, a city */
+function whereMsg(text, warn) {
+  const el = $('#where-msg');
+  el.textContent = text; el.classList.toggle('warn', !!warn);
+}
+const WHERE_DEFAULT = "Your location is used on this device to measure distance. It isn't saved, and it isn't sent to us.";
+function setOrigin(o) {
+  S.origin = o; S.auto = true; S.trad = null; S.q = ''; $('#q').value = ''; S.showAvoided = false;
+  if (S.pendingMatch) { S.pendingMatch = false; S.tab = 'matcher'; S.sort = 'match'; }
+  whereMsg(WHERE_DEFAULT);
+  runSearch();
+}
+function locate() {
+  if (!navigator.geolocation) { whereMsg("This browser can't share a location. Enter a ZIP code or city instead.", true); return; }
+  const btn = $('#btn-locate');
+  btn.disabled = true; $('span', btn).textContent = 'Finding you\u2026';
+  const done = () => { btn.disabled = false; $('span', btn).textContent = 'Use my location'; };
+  navigator.geolocation.getCurrentPosition((pos) => {
+    done(); setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude, kind: 'gps', label: 'Your location' });
+  }, (err) => {
+    done();
+    whereMsg(err.code === 1 ? 'Location is turned off for this page. Enter a ZIP code or city instead.' : "We couldn't get your location just now. Enter a ZIP code or city instead.", true);
+    $('#where').focus();
+  }, { enableHighAccuracy: false, timeout: 12000, maximumAge: 300000 });
+}
+let places = { letter: '', list: [] };
+let suggestions = [];
+let active = -1;
+async function suggest(text) {
+  const raw = text.trim();
+  const box = $('#suggest'), input = $('#where');
+  const close = () => { suggestions = []; active = -1; box.hidden = true; box.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); };
+  if (raw.length < 2 || /^\d/.test(raw)) { close(); return; }
+  const [cityPart, statePart] = raw.split(',').map((x) => x.trim());
+  const q = normPlace(cityPart), st = (statePart || '').toUpperCase().slice(0, 2);
+  if (!q || !/^[a-z]/.test(q)) { close(); return; }
+  if (places.letter !== q[0]) {
+    try {
+      const list = await cached('places/' + q[0] + '.json');
+      places = { letter: q[0], list: list.map((p) => ({ name: p[0], st: p[1], lat: p[2], lng: p[3], n: p[4], key: normPlace(p[0]) })) };
+    } catch (e) { close(); return; }
+    if (normPlace($('#where').value.split(',')[0]) !== q) return;      // they kept typing
+  }
+  const hit = places.list.filter((p) => p.key.startsWith(q) && (!st || p.st.startsWith(st)));
+  suggestions = hit.slice(0, 6);
+  if (!suggestions.length) { close(); return; }
+  active = -1;
+  box.innerHTML = suggestions.map((p, i) => `<li role="none"><button type="button" role="option" data-pick="${i}" aria-selected="false"><span>${esc(p.name)}, ${p.st}</span>${p.n ? `<small>${num(p.n)} ${p.n === 1 ? 'church' : 'churches'}</small>` : ''}</button></li>`).join('');
+  box.hidden = false; input.setAttribute('aria-expanded', 'true');
+}
+function pick(i) {
+  const p = suggestions[i];
+  if (!p) return;
+  $('#where').value = `${p.name}, ${p.st}`;
+  $('#suggest').hidden = true; suggestions = [];
+  setOrigin({ lat: p.lat, lng: p.lng, kind: 'city', label: `${p.name}, ${p.st}` });
+}
+async function submitWhere() {
+  const raw = $('#where').value.trim();
+  if (!raw) { whereMsg('Type a ZIP code or a city, or use your location.', true); return; }
+  const zip = raw.match(/^(\d{5})(-\d{4})?$/);
+  if (zip) {
+    try {
+      const table = await cached('zip/' + zip[1].slice(0, 2) + '.json');
+      const at = table[zip[1]];
+      if (!at) { whereMsg(`We don't have ZIP code ${zip[1]}. Check the number, or try the city.`, true); return; }
+      setOrigin({ lat: at[0], lng: at[1], kind: 'zip', label: 'ZIP ' + zip[1] });
+    } catch (e) { whereMsg('We could not look that up just now. Check your connection and try again.', true); }
+    return;
+  }
+  if (/^\d/.test(raw)) { whereMsg('A ZIP code has five digits.', true); return; }
+  if (!suggestions.length) await suggest(raw);
+  if (suggestions.length) pick(active >= 0 ? active : 0);
+  else whereMsg("We couldn't find that city. Try adding the state, like Franklin, TN, or use a ZIP code.", true);
+}
+
+/* ------------------------------------------------------------------ the Matcher's questions */
+const STEPS = [
+  { id: 'stage', title: 'Where are you with church right now?', sub: 'No wrong answer. It only changes how we talk to you.' },
+  { id: 'known', title: 'Which traditions have you been part of?', sub: 'Pick any you know from the inside. Skip this if there are none.' },
+  { id: 'avoid', title: 'Is there a tradition you would like us to leave out?', sub: 'Some people carry real hurt from a church. If that is you, we are sorry. Pick any tradition here and its churches will stay out of what we show you. You can change this at any time.' },
+  { id: 'worship', title: 'What kind of Sunday service feels right?', sub: 'Pick the one closest to what you are hoping for.' },
+  { id: 'care', title: 'What matters most to you in a church?', sub: 'Pick up to three.' },
+  { id: 'convictions', title: 'Two questions churches answer differently', sub: 'Answer either, both or neither. Whatever you skip is left out of your match.' },
+];
+const STAGES = [['first', 'Exploring for the first time', 'New to church, or new to faith'], ['back', 'Coming back after time away', 'It has been a while'], ['home', 'Looking for a new church home', 'Moved, or ready for a change'], ['visit', 'Visiting or traveling', 'Here for a Sunday or two']];
+const opt = (key, value, on, title, desc) => `<button class="opt" type="button" data-k="${key}" data-v="${esc(value)}" aria-pressed="${on}"><b>${esc(title)}</b>${desc ? `<span>${esc(desc)}</span>` : ''}</button>`;
+const tradGrid = (key, chosen) => `<div class="opts grid">${PICKABLE.map((t) => `<button class="opt" type="button" data-k="${key}" data-v="${t.id}" aria-pressed="${chosen.includes(t.id)}" title="${esc(t.includes)}"><b>${esc(t.label)}</b></button>`).join('')}</div>`;
+function stepAnswered(id) {
+  const A = S.answers;
+  return { stage: !!A.stage, known: A.known.length > 0, avoid: A.avoid.length > 0, worship: A.worship != null, care: A.care.length > 0, convictions: !!(A.marriage || A.women) }[id];
+}
+function renderQuiz(focusKey) {
+  const A = S.answers, step = STEPS[S.step];
+  $('#quiz-step').textContent = `Question ${S.step + 1} of ${STEPS.length}`;
+  $('#quiz-bar').style.setProperty('--p', Math.round(((S.step + 1) / STEPS.length) * 100) + '%');
+  let body = '';
+  if (step.id === 'stage') body = `<div class="opts two">${STAGES.map(([v, t, d]) => opt('stage', v, A.stage === v, t, d)).join('')}</div>`;
+  if (step.id === 'known') {
+    body = tradGrid('known', A.known);
+    if (A.known.length) body += `<div class="q-part"><h4>Are you hoping for something similar?</h4><div class="opts three">` +
+      opt('similar', 'yes', A.similar === 'yes', 'Yes, something like it') + opt('similar', 'open', A.similar === 'open', "I'm open either way") + opt('similar', 'no', A.similar === 'no', 'Something different') + '</div></div>';
+  }
+  if (step.id === 'avoid') body = tradGrid('avoid', A.avoid);
+  if (step.id === 'worship') body = `<div class="opts">${TR.worshipScale.map((w) => opt('worship', w.v, A.worship === w.v, w.label, w.desc)).join('')}</div>`;
+  if (step.id === 'care') body = `<div class="opts two">${TR.emphases.map((e) => opt('care', e.id, A.care.includes(e.id), e.label)).join('')}</div><p class="care-left">${A.care.length} of 3 chosen</p>`;
+  if (step.id === 'convictions') {
+    body = `<div class="q-part"><h4>On marriage and sexuality, I am looking for a church with</h4><div class="opts">` +
+      opt('marriage', 'traditional', A.marriage === 'traditional', 'Traditional teaching', 'Marriage is between a man and a woman') +
+      opt('marriage', 'affirming', A.marriage === 'affirming', 'An affirming stance', 'Same-sex marriage and LGBTQ clergy are welcomed') + '</div></div>' +
+      `<div class="q-part"><h4>On who can pastor, I am looking for a church where</h4><div class="opts">` +
+      opt('women', 'yes', A.women === 'yes', 'Women and men both serve as pastors') + opt('women', 'no', A.women === 'no', 'Pastors are men') + '</div></div>';
+  }
+  $('#quiz-body').innerHTML = `<h2 class="q-title">${esc(step.title)}</h2><p class="q-sub">${esc(step.sub)}</p>${body}`;
+  const last = S.step === STEPS.length - 1;
+  $('#quiz-back').hidden = S.step === 0;
+  $('#quiz-next').textContent = last ? 'See my matches' : stepAnswered(step.id) ? 'Next' : 'Skip';
+  if (focusKey) { const el = $(`.opt[data-k="${focusKey[0]}"][data-v="${CSS.escape(focusKey[1])}"]`); if (el) el.focus(); }
+}
+/* A new question should start at its title, not wherever the last one left the page. */
+function quizTop() {
+  const box = $('.quiz-box');
+  if (box.getBoundingClientRect().top < 0) box.scrollIntoView({ block: 'start' });
+  const title = $('.q-title');
+  title.setAttribute('tabindex', '-1'); title.focus({ preventScroll: true });
+}
+function answer(k, v) {
+  const A = S.answers;
+  if (k === 'worship') A.worship = A.worship === +v ? null : +v;
+  else if (k === 'known' || k === 'avoid' || k === 'care') {
+    const at = A[k].indexOf(v);
+    if (at >= 0) A[k].splice(at, 1);
+    else if (k !== 'care' || A.care.length < 3) A[k].push(v);
+    if (k === 'known' && !A.known.length) A.similar = null;
+  } else A[k] = A[k] === v ? null : v;
+  renderQuiz([k, String(v)]);
+}
+function openQuiz(step) {
+  S.backTo = S.view === 'quiz' ? S.backTo : S.view;
+  S.step = step || 0;
+  show('quiz'); renderQuiz();
+  $('.quiz-box').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+function finishQuiz() {
+  fitCache = new Map();
+  S.hasProfile = hasAnswers(S.answers) || S.answers.avoid.length > 0;
+  S.showAvoided = false; S.trad = null;
+  if (!S.hasProfile) { S.tab = 'finder'; S.sort = 'near'; }
+  else { S.tab = 'matcher'; S.sort = hasAnswers(S.answers) ? 'match' : 'near'; }
+  save();
+  if (!S.origin) { S.pendingMatch = S.hasProfile; show('start'); $('#btn-locate').focus(); return; }
+  show('app'); applyFilters(); renderResults(); updateMap(false);
+}
+function setTab(tab) {
+  if (tab === 'matcher') {
+    if (!S.hasProfile) { openQuiz(0); return; }
+    S.tab = 'matcher'; S.sort = hasAnswers(S.answers) ? 'match' : 'near';
+  } else { S.tab = 'finder'; S.sort = 'near'; S.pendingMatch = false; }
+  if (S.trad && S.trad.startsWith('d:') && tab !== 'matcher') S.trad = null;
+  save();
+  if (!S.origin) { S.pendingMatch = tab === 'matcher'; show('start'); return; }
+  show('app'); applyFilters(); renderResults(); updateMap(false);
+}
+
+/* ------------------------------------------------------------------ the map */
+const INK = '#000000', CREAM = '#FDFBF6', GOLD = '#FFCC00';
+const NAME = ['coalesce', ['get', 'name_en'], ['get', 'name']];
+const ROAD = (id, classes, color, widths, minzoom) => ({ id, type: 'line', source: 'omt', 'source-layer': 'transportation', minzoom,
+  filter: ['all', ['match', ['geometry-type'], ['LineString', 'MultiLineString'], true, false], ['match', ['get', 'class'], classes, true, false]],
+  layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': color, 'line-width': ['interpolate', ['exponential', 1.5], ['zoom'], ...widths] } });
+const LABEL = (id, cls, size, font, minzoom, extra) => ({ id, type: 'symbol', source: 'omt', 'source-layer': 'place', minzoom, filter: ['==', ['get', 'class'], cls],
+  layout: Object.assign({ 'text-field': NAME, 'text-font': [font], 'text-size': size, 'text-max-width': 8 }, extra || {}),
+  paint: { 'text-color': INK, 'text-halo-color': CREAM, 'text-halo-width': 1.6 } });
+/* The site's colors on an OpenStreetMap base: cream land, warm grey water and roads, black type. */
+const STYLE = {
+  version: 8,
+  glyphs: CFG.tiles + '/fonts/{fontstack}/{range}.pbf',
+  sources: { omt: { type: 'vector', url: CFG.tiles + '/planet' } },
+  layers: [
+    { id: 'bg', type: 'background', paint: { 'background-color': CREAM } },
+    { id: 'wood', type: 'fill', source: 'omt', 'source-layer': 'landcover', filter: ['==', ['get', 'class'], 'wood'], paint: { 'fill-color': '#F1EEE0', 'fill-opacity': 0.9 } },
+    { id: 'park', type: 'fill', source: 'omt', 'source-layer': 'park', paint: { 'fill-color': '#EFEBDB' } },
+    { id: 'water', type: 'fill', source: 'omt', 'source-layer': 'water', paint: { 'fill-color': '#D8D5CB' } },
+    { id: 'waterway', type: 'line', source: 'omt', 'source-layer': 'waterway', paint: { 'line-color': '#D8D5CB', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 14, 2.4] } },
+    { id: 'building', type: 'fill', source: 'omt', 'source-layer': 'building', minzoom: 14, paint: { 'fill-color': '#EEEAE0' } },
+    ROAD('road-minor', ['minor', 'service', 'track'], '#E7E3D8', [12, 0.6, 15, 3, 18, 12], 12),
+    ROAD('road-major', ['primary', 'secondary', 'tertiary', 'trunk'], '#D5D0C2', [8, 0.7, 12, 2, 15, 6, 18, 18], 8),
+    ROAD('road-motorway', ['motorway'], '#BDB7A6', [5, 0.8, 10, 2.2, 15, 8, 18, 22], 5),
+    { id: 'state-line', type: 'line', source: 'omt', 'source-layer': 'boundary', filter: ['all', ['==', ['get', 'admin_level'], 4], ['!=', ['get', 'maritime'], 1]], paint: { 'line-color': '#8E897D', 'line-dasharray': [3, 2], 'line-width': 1 } },
+    { id: 'road-name', type: 'symbol', source: 'omt', 'source-layer': 'transportation_name', minzoom: 13,
+      filter: ['match', ['get', 'class'], ['primary', 'secondary', 'tertiary', 'trunk', 'minor'], true, false],
+      layout: { 'symbol-placement': 'line', 'text-field': NAME, 'text-font': ['Noto Sans Regular'], 'text-size': ['interpolate', ['linear'], ['zoom'], 13, 10, 16, 12.5] },
+      paint: { 'text-color': '#4A4740', 'text-halo-color': CREAM, 'text-halo-width': 1.4 } },
+    LABEL('place-suburb', 'suburb', 11, 'Noto Sans Regular', 11, { 'text-transform': 'uppercase', 'text-letter-spacing': 0.08 }),
+    LABEL('place-village', 'village', 12, 'Noto Sans Regular', 9),
+    LABEL('place-town', 'town', ['interpolate', ['linear'], ['zoom'], 7, 11, 12, 15], 'Noto Sans Bold', 6),
+    LABEL('place-city', 'city', ['interpolate', ['linear'], ['zoom'], 4, 11, 11, 19], 'Noto Sans Bold', 3),
+    LABEL('place-state', 'state', 12, 'Noto Sans Regular', 4, { 'text-transform': 'uppercase', 'text-letter-spacing': 0.14 }),
+  ],
+};
+STYLE.layers.find((l) => l.id === 'place-state').maxzoom = 8;
+const EMPTY = { type: 'FeatureCollection', features: [] };
+let map = null;
+let mapReady = null;
+let mapDead = false;
+function ensureMap() {
+  if (mapReady) return mapReady;
+  mapReady = new Promise((resolve) => {
+    const dead = () => { if (map || mapDead) return; mapDead = true; resolve(null); };
+    if (host.dataset.map === 'plain' || new URLSearchParams(window.location.search).get('map') === 'plain') { dead(); return; }
+    const css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = CFG.mapCss; root.appendChild(css);
+    const build = () => {
+      try {
+        map = new window.maplibregl.Map({ container: $('#map'), style: STYLE, center: [S.origin.lng, S.origin.lat], zoom: 10, minZoom: 3, maxZoom: 18,
+          attributionControl: { compact: true }, cooperativeGestures: true, dragRotate: false, pitchWithRotate: false });
+        map.touchZoomRotate.disableRotation();
+        map.addControl(new window.maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+        map.on('load', () => { addLayers(); resolve(map); });
+        map.on('error', () => { /* a missed tile is not worth a message */ });
+        new ResizeObserver(() => map && map.resize()).observe($('#map'));
+      } catch (e) { map = null; dead(); }
+    };
+    if (window.maplibregl) build();
+    else {
+      const js = document.createElement('script');
+      js.src = CFG.mapJs; js.async = true; js.onload = build; js.onerror = dead;
+      document.head.appendChild(js);
+    }
+    setTimeout(() => { if (!map) dead(); }, 15000);
+  });
+  return mapReady;
+}
+function addLayers() {
+  const strong = ['>=', ['get', 'fit'], 75];
+  map.addSource('ring', { type: 'geojson', data: EMPTY });
+  map.addLayer({ id: 'ring', type: 'line', source: 'ring', paint: { 'line-color': INK, 'line-width': 1.5, 'line-dasharray': [2, 3], 'line-opacity': 0.6 } });
+  map.addSource('me', { type: 'geojson', data: EMPTY });
+  map.addLayer({ id: 'me-halo', type: 'circle', source: 'me', paint: { 'circle-radius': 27, 'circle-color': GOLD, 'circle-opacity': 0.4, 'circle-stroke-color': INK, 'circle-stroke-width': 1, 'circle-stroke-opacity': 0.5 } });
+  map.addLayer({ id: 'me', type: 'circle', source: 'me', paint: { 'circle-radius': 6, 'circle-color': GOLD, 'circle-stroke-color': INK, 'circle-stroke-width': 3 } });
+  map.addSource('churches', { type: 'geojson', data: EMPTY, cluster: true, clusterRadius: 38, maxzoom: 22, clusterMaxZoom: 21, clusterProperties: { strong: ['+', ['case', strong, 1, 0]] } });
+  map.addLayer({ id: 'clusters', type: 'circle', source: 'churches', filter: ['has', 'point_count'], paint: {
+    'circle-color': INK, 'circle-radius': ['step', ['get', 'point_count'], 13, 10, 16, 50, 20, 250, 25, 1000, 30],
+    'circle-stroke-color': ['case', ['>', ['get', 'strong'], 0], GOLD, CREAM], 'circle-stroke-width': ['case', ['>', ['get', 'strong'], 0], 3, 2] } });
+  map.addLayer({ id: 'cluster-count', type: 'symbol', source: 'churches', filter: ['has', 'point_count'],
+    layout: { 'text-field': ['get', 'point_count_abbreviated'], 'text-font': ['Noto Sans Bold'], 'text-size': 12, 'text-allow-overlap': true }, paint: { 'text-color': CREAM } });
+  map.addLayer({ id: 'points', type: 'circle', source: 'churches', filter: ['!', ['has', 'point_count']], paint: {
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 8, 4.5, 14, 7],
+    'circle-color': ['case', strong, GOLD, ['==', ['get', 'q'], 2], CREAM, INK],
+    'circle-stroke-color': ['case', strong, INK, ['==', ['get', 'q'], 2], INK, CREAM], 'circle-stroke-width': 1.75 } });
+  map.addSource('sel', { type: 'geojson', data: EMPTY });
+  map.addLayer({ id: 'sel', type: 'circle', source: 'sel', paint: { 'circle-radius': 11, 'circle-color': GOLD, 'circle-stroke-color': INK, 'circle-stroke-width': 3 } });
+  map.on('click', 'points', (e) => select(e.features[0].properties.uid, 'map'));
+  map.on('click', 'clusters', async (e) => {
+    const f = e.features[0], src = map.getSource('churches');
+    try {
+      const zoom = await src.getClusterExpansionZoom(f.properties.cluster_id);
+      if (zoom > 17.5 || zoom <= map.getZoom() + 0.05) {
+        const leaves = await src.getClusterLeaves(f.properties.cluster_id, 2000, 0);
+        S.spot = { ids: new Set(leaves.map((l) => l.properties.uid)) };
+        S.page = 1; S.sel = null; applyFilters(); renderResults(); showSelected();
+        $('#count').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      } else map.easeTo({ center: f.geometry.coordinates, zoom });
+    } catch (err) { if (DEBUG) console.warn('cluster', err); }
+  });
+  for (const id of ['points', 'clusters']) {
+    map.on('mouseenter', id, () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', id, () => { map.getCanvas().style.cursor = ''; });
+  }
+}
+function circle(o, r) {
+  const pts = [];
+  for (let i = 0; i <= 72; i++) {
+    const a = (i * 5) * RAD;
+    pts.push([o.lng + (r / (69.17 * Math.cos(o.lat * RAD))) * Math.sin(a), o.lat + (r / 69.0) * Math.cos(a)]);
+  }
+  return { type: 'Feature', geometry: { type: 'LineString', coordinates: pts }, properties: {} };
+}
+/* Churches on the map are the ones the list is showing, minus the tradition chips' own paging. */
+async function updateMap(fit) {
+  if (S.view !== 'app' || !S.origin) return;
+  const m = await ensureMap();
+  if (!m) { drawRadar(); return; }
+  const score = matching();
+  const pts = (S.spot ? S.base : S.shown).filter((it) => !S.trad || tradFilter(it));
+  m.getSource('churches').setData({ type: 'FeatureCollection', features: pts.map((it) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [it.c.lng, it.c.lat] },
+    properties: { uid: it.c.uid, q: it.c.locq, fit: score && it.fit != null ? Math.round(it.fit * 100) : -1 } })) });
+  m.getSource('ring').setData(circle(S.origin, S.radius));
+  m.getSource('me').setData({ type: 'Feature', geometry: { type: 'Point', coordinates: [S.origin.lng, S.origin.lat] }, properties: {} });
+  showSelected();
+  if (fit) {
+    const dLat = S.radius / 69.0, dLng = S.radius / (69.17 * Math.cos(S.origin.lat * RAD));
+    m.resize();
+    m.fitBounds([[S.origin.lng - dLng, S.origin.lat - dLat], [S.origin.lng + dLng, S.origin.lat + dLat]], { padding: 24, duration: 500 });
+  }
+}
+function showSelected() {
+  if (!map || !map.getSource('sel')) { if (mapDead) drawRadar(); return; }
+  const it = S.sel && S.shown.find((x) => x.c.uid === S.sel);
+  map.getSource('sel').setData(it ? { type: 'Feature', geometry: { type: 'Point', coordinates: [it.c.lng, it.c.lat] }, properties: {} } : EMPTY);
+  if (it && !map.getBounds().contains([it.c.lng, it.c.lat])) map.easeTo({ center: [it.c.lng, it.c.lat] });
+}
+/* If the map library or its tiles cannot load, draw the same churches as a plain compass view: you in the middle,
+   distance rings around you. No streets, but it always works. */
+function drawRadar() {
+  const el = $('#map');
+  if (S.view !== 'app' || !S.origin) return;
+  const size = 600, mid = size / 2, reach = mid - 26, o = S.origin, R = S.radius, k = Math.cos(o.lat * RAD);
+  const rows = S.shown.slice(0, 700);
+  const dot = (it) => {
+    const x = mid + ((it.c.lng - o.lng) * 69.17 * k / R) * reach, y = mid - ((it.c.lat - o.lat) * 69.0 / R) * reach;
+    const on = S.sel === it.c.uid, strong = matching() && it.fit >= 0.75;
+    return `<circle data-id="${esc(it.c.uid)}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${on ? 10 : 5.5}" fill="${on || strong ? GOLD : it.c.locq === 2 ? CREAM : INK}" stroke="${on || strong || it.c.locq === 2 ? INK : CREAM}" stroke-width="${on ? 3 : 1.5}" style="cursor:pointer"><title>${esc(it.c.name)}</title></circle>`;
+  };
+  const rings = [1 / 3, 2 / 3, 1].map((f) => `<circle cx="${mid}" cy="${mid}" r="${(reach * f).toFixed(1)}" fill="none" stroke="${INK}" stroke-opacity="0.35" stroke-dasharray="3 5"/>` +
+    `<text x="${mid + 4}" y="${(mid - reach * f - 5).toFixed(1)}" font-size="13" fill="#5C5A55">${fmtDist(R * f)} mi</text>`).join('');
+  el.innerHTML = `<svg class="radar" viewBox="0 0 ${size} ${size}" role="img" aria-label="Churches around you, by direction and distance">${rings}` +
+    `<text x="${mid}" y="16" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">N</text>${rows.map(dot).join('')}` +
+    `<circle cx="${mid}" cy="${mid}" r="7" fill="${GOLD}" stroke="${INK}" stroke-width="3"/></svg>`;
+}
+
+/* ------------------------------------------------------------------ taps and typing */
+root.addEventListener('click', (e) => {
+  const t = e.target.closest('button, a');
+  if (!t) return;
+  if (t.dataset.tab) { setTab(t.dataset.tab); return; }
+  if (t.id === 'btn-locate') { locate(); return; }
+  if (t.dataset.pick) { pick(+t.dataset.pick); return; }
+  if (t.id === 'btn-change') { show('start'); $('#where').focus(); return; }
+  if (t.dataset.radius) { S.radius = +t.dataset.radius; S.auto = false; runSearch(); return; }
+  if (t.dataset.sort) { S.sort = t.dataset.sort; S.page = 1; applyFilters(); renderResults(); return; }
+  if (t.dataset.trad != null && !t.classList.contains('opt')) {
+    S.trad = S.trad === t.dataset.trad ? null : (t.dataset.trad || null);
+    S.page = 1; S.sel = null; applyFilters(); renderResults(); updateMap(false); return;
+  }
+  if (t.id === 'btn-more') { S.page++; renderList(); return; }
+  if (t.classList.contains('card-main')) { select(t.closest('.card').dataset.id, 'list'); return; }
+  if (t.dataset.k) { answer(t.dataset.k, t.dataset.v); return; }
+  if (t.id === 'quiz-next') { if (S.step < STEPS.length - 1) { S.step++; renderQuiz(); quizTop(); } else finishQuiz(); return; }
+  if (t.id === 'quiz-back') { if (S.step > 0) { S.step--; renderQuiz(); quizTop(); } return; }
+  if (t.id === 'quiz-close') { if (S.backTo === 'app' && S.origin) { show('app'); renderResults(); } else show('start'); return; }
+  const act = t.dataset.act;
+  if (act === 'retry') runSearch();
+  if (act === 'unspot') { S.spot = null; S.page = 1; applyFilters(); renderResults(); updateMap(false); }
+  if (act === 'show-avoided' || act === 'hide-avoided') { S.showAvoided = act === 'show-avoided'; S.page = 1; applyFilters(); renderResults(); updateMap(false); }
+  if (act === 'clear-filters') { S.trad = null; S.q = ''; $('#q').value = ''; S.onlyExact = false; S.spot = null; S.page = 1; applyFilters(); renderResults(); updateMap(false); }
+  if (act === 'edit-answers') openQuiz(0);
+  if (act === 'clear-answers') { S.answers = blankAnswers(); S.hasProfile = false; fitCache = new Map(); S.tab = 'finder'; S.sort = 'near'; S.trad = null; S.showAvoided = false; save(); show('app'); applyFilters(); renderResults(); updateMap(false); }
+});
+$('#where-form').addEventListener('submit', (e) => { e.preventDefault(); submitWhere(); });
+let typing = 0;
+$('#where').addEventListener('input', (e) => { clearTimeout(typing); const v = e.target.value; typing = setTimeout(() => suggest(v), 110); });
+$('#where').addEventListener('keydown', (e) => {
+  if (!suggestions.length) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    active = (active + (e.key === 'ArrowDown' ? 1 : -1) + suggestions.length) % suggestions.length;
+    $$('#suggest button').forEach((b, i) => b.setAttribute('aria-selected', String(i === active)));
+  } else if (e.key === 'Escape') { $('#suggest').hidden = true; suggestions = []; }
+});
+$('#where').addEventListener('blur', () => setTimeout(() => { $('#suggest').hidden = true; }, 180));
+let searching = 0;
+$('#q').addEventListener('input', (e) => { clearTimeout(searching); const v = e.target.value; searching = setTimeout(() => { S.q = v; S.page = 1; S.sel = null; applyFilters(); renderChips(); renderCount(); renderList(); updateMap(false); }, 160); });
+$('#only-exact').addEventListener('change', (e) => { S.onlyExact = e.target.checked; S.page = 1; applyFilters(); renderResults(); updateMap(false); });
+$('#map').addEventListener('click', (e) => { const dot = e.target.closest && e.target.closest('circle[data-id]'); if (dot) select(dot.dataset.id, 'map'); });
+
+/* The block keeps its text off the screen edge wherever it touches one. */
+function edges() {
+  const r = host.getBoundingClientRect();
+  host.toggleAttribute('data-edge-left', r.left < 8);
+  host.toggleAttribute('data-edge-right', document.documentElement.clientWidth - r.right < 8);
+}
+/* If the site keeps a header on screen, the map that follows you down the page stops below it. */
+function stick() {
+  let h = 0;
+  const top = document.elementFromPoint(document.documentElement.clientWidth / 2, 2);
+  for (let n = top; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+    const pos = getComputedStyle(n).position;
+    if (pos === 'fixed' || pos === 'sticky') h = Math.max(h, n.getBoundingClientRect().bottom);
+  }
+  host.style.setProperty('--stick', Math.max(0, Math.min(h, 220)) + 'px');
+}
+edges(); stick();
+window.addEventListener('resize', () => { edges(); stick(); });
+let ticking = 0;
+window.addEventListener('scroll', () => { if (!ticking) ticking = setTimeout(() => { ticking = 0; stick(); }, 250); }, { passive: true });
+
+/* The wheat mark, drawn wherever the markup asks for it. */
+const wheat = $('#wheat-path').getAttribute('d');
+$$('svg[data-wheat]').forEach((svg) => {
+  const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  p.setAttribute('d', wheat); p.setAttribute('fill', 'currentColor'); p.setAttribute('fill-rule', 'evenodd');
+  svg.appendChild(p);
+});
+
+/* ------------------------------------------------------------------ start */
+restore();
+const link = new URLSearchParams(window.location.search);
+if (DEBUG) host.ggc = { S, map: () => map, fitOf, profileOf, index: () => INDEX, reset: () => { fitCache = new Map(); } };
+show('start');
+loadIndex().then(async () => {
+  const near = (link.get('near') || '').split(',').map(Number);
+  if (link.get('tab') === 'matcher' && !S.hasProfile) { if (near.length !== 2 && !link.get('zip')) { openQuiz(0); return; } }
+  if (near.length === 2 && near.every(Number.isFinite)) { setOrigin({ lat: near[0], lng: near[1], kind: 'link', label: 'this spot' }); return; }
+  if (/^\d{5}$/.test(link.get('zip') || '')) { $('#where').value = link.get('zip'); submitWhere(); return; }
+  if (S.origin) runSearch();
+}).catch(() => { whereMsg('We could not load the church list just now. Check your connection and reload the page.', true); });
+})();
+</script>
+</body>
+</html>
